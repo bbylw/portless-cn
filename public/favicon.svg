@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="portless">
+  <defs>
+    <linearGradient id="g" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#16a34a"/>
+    </linearGradient>
+    <linearGradient id="gh" x1="0" y1="0" x2="32" y2="16" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- outer with subtle stroke for dark-mode tab visibility -->
+  <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" fill="url(#g)" stroke="white" stroke-opacity="0.14"/>
+  <rect width="32" height="32" rx="8" fill="url(#gh)"/>
+  <!-- P glyph - geometric, balanced -->
+  <path d="M10.2 22V9.8h5.1c1.55 0 2.78.42 3.68 1.26.9.84 1.35 1.98 1.35 3.42 0 1.44-.45 2.58-1.35 3.42-.9.84-2.13 1.26-3.68 1.26h-2.4V22h-2.7zm2.7-5.05h1.9c.7 0 1.23-.17 1.6-.52.37-.35.55-.84.55-1.48 0-.64-.18-1.13-.55-1.48-.37-.35-.9-.52-1.6-.52h-1.9v4z" fill="white"/>
+  <!-- status dot -->
+  <circle cx="23.5" cy="8.5" r="3.2" fill="white" fill-opacity="0.95"/>
+  <circle cx="23.5" cy="8.5" r="1.9" fill="#22c55e"/>
+</svg>
