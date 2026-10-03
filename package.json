@@ -1,7 +1,13 @@
 {
   "name": "portless-website",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bbylw/portless-cn"
+  },
+  "homepage": "https://portless.ndjp.net/",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
