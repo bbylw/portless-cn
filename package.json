@@ -9,9 +9,9 @@
   },
   "homepage": "https://portless.ndjp.net/",
   "scripts": {
-    "dev": "vite",
+    "dev": "portless run vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
+    "preview": "portless run vite preview",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
