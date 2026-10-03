@@ -21,7 +21,7 @@ export function Features() {
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium tracking-widest uppercase text-zinc-400">
             <span className="size-1.5 rounded-full bg-violet-500"></span> 核心能力
           </div>
-          <h2 className="mt-4 text-[30px] font-bold tracking-tight sm:text-[38px]">
+          <h2 className="mt-4 text-[30px] font-bold tracking-tight text-balance sm:text-[38px]">
             为什么选择 <span className="gradient-text">portless</span>？
           </h2>
           <p className="mt-3 text-[15px] leading-relaxed text-zinc-400 sm:text-[16px]">
@@ -42,10 +42,6 @@ export function Features() {
                 </div>
                 <h3 className="text-[15px] font-semibold tracking-tight text-white">{f.title}</h3>
                 <p className="mt-2 text-[13.5px] leading-relaxed text-zinc-400">{f.desc}</p>
-                <div className="mt-4 flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase text-white/20 group-hover:text-white/40 transition">
-                  <span>了解更多</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>
-                </div>
               </div>
             </div>
           ))}

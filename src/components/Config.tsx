@@ -11,7 +11,7 @@ export function Config() {
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium tracking-widest uppercase text-zinc-400">
             <span className="size-1.5 rounded-full bg-emerald-500"></span> 配置
           </div>
-          <h2 className="mt-4 text-[30px] font-bold tracking-tight sm:text-[38px]">灵活配置，开箱即用</h2>
+          <h2 className="mt-4 text-[30px] font-bold tracking-tight text-balance sm:text-[38px]">灵活配置，开箱即用</h2>
           <p className="mt-3 text-[15px] text-zinc-400">
             裸 <code className="font-mono text-emerald-300 bg-emerald-500/10 px-1.5 py-0.5 rounded text-xs">portless</code> 自动推断；需要时用 <code className="font-mono text-violet-300 bg-violet-500/10 px-1.5 py-0.5 rounded text-xs">portless.json</code> 覆盖。
           </p>
