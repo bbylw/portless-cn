@@ -61,7 +61,7 @@ export function Config() {
         <div className="mx-auto mt-6 grid max-w-5xl gap-4 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="rounded-[16px] border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-5">
             <h3 className="text-sm font-semibold text-white flex items-center gap-2"><span className="size-7 rounded-lg bg-white text-black flex items-center justify-center text-xs font-bold">T</span> 搭配 Turborepo</h3>
-            <p className="mt-2 text-[13px] text-zinc-400">将 <code className="font-mono text-xs text-emerald-300">portless</code> 作为 dev 脚本，真实命令放到单独脚本中。无需改 <code className="font-mono text-xs text-zinc-300">turbo.json</code>。</p>
+            <p className="mt-2 text-[13px] text-zinc-400">将 <code className="font-mono text-xs text-emerald-300">portless</code> 作为 dev 脚本，真实命令放到单独脚本中。无需改 <code className="font-mono text-xs text-zinc-300">turbo.json</code> 或 <code className="font-mono text-xs text-zinc-300">turbo.jsonc</code>。</p>
             <div className="mt-4">
               <CodeBlock code={`{\n  "scripts": {\n    "dev": "portless",\n    "dev:app": "next dev"\n  },\n  "portless": { "name": "myapp", "script": "dev:app" }\n}`} label="package.json" />
             </div>
