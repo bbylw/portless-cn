@@ -13,7 +13,8 @@ function LogoSvg() {
     <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
       <rect width="36" height="36" rx="10" fill="url(#navG)"/>
       <rect width="36" height="36" rx="10" fill="url(#navH)" />
-      <path d="M11 24V11.2h5.6c1.7 0 3.05.46 4.04 1.38.99.92 1.48 2.17 1.48 3.75 0 1.58-.49 2.83-1.48 3.75-.99.92-2.34 1.38-4.04 1.38H13V24H11zm2.9-5.54h2.2c.82 0 1.44-.2 1.88-.6.44-.4.66-.97.66-1.71 0-.74-.22-1.31-.66-1.71-.44-.4-1.06-.6-1.88-.6H13.9v4.62z" fill="white"/>
+      <path d="M10.7 26.5V17.5a7.3 7.3 0 0 1 14.6 0v9" stroke="white" strokeWidth="3.8" strokeLinecap="round" fill="none"/>
+      <path d="M7.3 26.5h21.4" stroke="white" strokeOpacity="0.5" strokeWidth="2.4" strokeLinecap="round"/>
       <defs>
         <linearGradient id="navG" x1="4" y1="4" x2="32" y2="32" gradientUnits="userSpaceOnUse">
           <stop stopColor="#22c55e"/><stop offset="1" stopColor="#16a34a"/>
