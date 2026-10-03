@@ -22,7 +22,7 @@ export function Advanced() {
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium tracking-widest uppercase text-zinc-400">
             <span className="size-1.5 rounded-full bg-violet-500"></span> 进阶
           </div>
-          <h2 className="mt-4 text-[30px] font-bold tracking-tight sm:text-[38px]">为真实场景而生</h2>
+          <h2 className="mt-4 text-[30px] font-bold tracking-tight text-balance sm:text-[38px]">为真实场景而生</h2>
           <p className="mt-3 text-[15px] text-zinc-400">子域名、Worktree、自定义 TLD、LAN、共享到公网，一应俱全。</p>
         </div>
 

@@ -11,7 +11,7 @@ export function Install() {
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium tracking-widest uppercase text-zinc-400">
             <span className="size-1.5 rounded-full bg-emerald-500"></span> 安装
           </div>
-          <h2 className="mt-4 text-[30px] font-bold tracking-tight sm:text-[38px]">一行命令，立即可用</h2>
+          <h2 className="mt-4 text-[30px] font-bold tracking-tight text-balance sm:text-[38px]">一行命令，立即可用</h2>
           <p className="mt-3 text-[15px] text-zinc-400">
             portless 仍处于 1.0 之前版本。全局安装可获得一致体验与更稳定的状态目录。
           </p>
@@ -54,7 +54,7 @@ export function Install() {
       {/* 快速开始 */}
       <div id="quickstart" className="relative mx-auto mt-16 sm:mt-24 max-w-[1280px] px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-[28px] font-bold tracking-tight sm:text-[34px]">快速开始</h2>
+          <h2 className="text-[28px] font-bold tracking-tight text-balance sm:text-[34px]">快速开始</h2>
           <p className="mt-3 text-[15px] text-zinc-400">三步从端口号迈向具名域名。</p>
         </div>
 

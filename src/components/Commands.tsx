@@ -25,7 +25,7 @@ export function Commands() {
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium tracking-widest uppercase text-zinc-400">
             <span className="size-1.5 rounded-full bg-emerald-500"></span> 参考手册
           </div>
-          <h2 className="mt-4 text-[30px] font-bold tracking-tight sm:text-[38px]">命令参考</h2>
+          <h2 className="mt-4 text-[30px] font-bold tracking-tight text-balance sm:text-[38px]">命令参考</h2>
           <p className="mt-3 text-[15px] text-zinc-400">所有 portless 命令、选项与环境变量一览。支持即时搜索。</p>
         </div>
 

@@ -75,9 +75,9 @@ export function Hero() {
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-zinc-500">
             <span className="inline-flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-emerald-500"></span> 零配置启动</span>
-            <span className="size-1 size-1 rounded-full bg-white/15"></span>
+            <span className="size-1 rounded-full bg-white/15"></span>
             <span className="inline-flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-violet-500"></span> HTTPS + HTTP/2</span>
-            <span className="size-1 size-1 rounded-full bg-white/15"></span>
+            <span className="size-1 rounded-full bg-white/15"></span>
             <span>Node.js 24+ · macOS / Linux / Windows</span>
           </div>
         </div>

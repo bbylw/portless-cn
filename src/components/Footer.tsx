@@ -19,10 +19,10 @@ export function Footer() {
           </div>
           <div><h4 className="text-xs font-semibold tracking-widest uppercase text-white/40">导航</h4><ul className="mt-3 space-y-2 text-sm text-zinc-400"><li><a href="#features" className="hover:text-white transition">功能</a></li><li><a href="#install" className="hover:text-white transition">安装</a></li><li><a href="#quickstart" className="hover:text-white transition">快速开始</a></li><li><a href="#commands" className="hover:text-white transition">命令</a></li></ul></div>
           <div><h4 className="text-xs font-semibold tracking-widest uppercase text-white/40">配置</h4><ul className="mt-3 space-y-2 text-sm text-zinc-400"><li><a href="#config" className="hover:text-white transition">portless.json</a></li><li><a href="#config" className="hover:text-white transition">Monorepo</a></li><li><a href="#config" className="hover:text-white transition">Turborepo</a></li><li><a href="#advanced" className="hover:text-white transition">进阶功能</a></li></ul></div>
-          <div><h4 className="text-xs font-semibold tracking-widest uppercase text-white/40">资源</h4><ul className="mt-3 space-y-2 text-sm text-zinc-400"><li><a href="https://github.com/vercel-labs/portless" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">GitHub</a></li><li><span className="text-zinc-500">npm: portless</span></li><li><span className="text-zinc-500">Node.js 24+ · pnpm 11</span></li></ul></div>
+          <div><h4 className="text-xs font-semibold tracking-widest uppercase text-white/40">资源</h4><ul className="mt-3 space-y-2 text-sm text-zinc-400"><li><a href="https://github.com/vercel-labs/portless" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">GitHub</a></li><li><a href="https://www.npmjs.com/package/portless" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">npm: portless</a></li><li><span className="text-zinc-500">Node.js 24+ · pnpm 11</span></li></ul></div>
         </div>
         <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 sm:flex-row">
-          <p className="text-xs text-zinc-500">© {new Date().getFullYear()} portless · 为人类和智能体（agent）设计 · MIT</p>
+          <p className="text-xs text-zinc-500">© {new Date().getFullYear()} portless · 为人类和智能体（agent）设计 · Apache-2.0</p>
           <p className="text-xs text-zinc-600">用具名的 .localhost URL 取代端口号 · HTTPS 默认 · HTTP/2 多路复用</p>
         </div>
       </div>
