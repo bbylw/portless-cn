@@ -126,7 +126,7 @@ export const commands = [
   },
   {
     cmd: "portless hosts sync",
-    desc: "将路由添加到 /etc/hosts（修复 Safari）",
+    desc: "将路由与 /etc/hosts 对齐（修复 Safari）",
   },
   {
     cmd: "portless hosts clean",

@@ -2,6 +2,13 @@
 
 用稳定、具名的 `.localhost` URL 取代端口号，用于本地开发。为人类和智能体（agent）设计。
 
+<p>
+  <a href="https://vercel.com/labs#labs-products"><img alt="Vercel Labs Product" src="https://img.shields.io/badge/LABS-PRODUCT-0a0a0a.svg?style=for-the-badge&amp;logo=Vercel&amp;labelColor=000000" height="28"></a>
+  <a href="https://www.npmjs.com/package/portless"><img alt="npm version: portless" src="https://img.shields.io/npm/v/portless.svg?style=for-the-badge&amp;labelColor=000000" height="28"></a>
+  <a href="https://github.com/vercel-labs/portless/blob/main/LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/github/license/vercel-labs/portless.svg?style=for-the-badge&amp;labelColor=000000" height="28"></a>
+  <a href="https://www.npmjs.com/package/portless"><img alt="npm downloads per month: portless" src="https://img.shields.io/npm/dm/portless.svg?style=for-the-badge&amp;labelColor=000000&amp;label=npm%20downloads" height="28"></a>
+</p>
+
 ```diff
 - "dev": "next dev"                  # http://localhost:3000
 + "dev": "portless run next dev"     # https://myapp.localhost
@@ -138,9 +145,11 @@ portless --script test        # 运行 "test" 而不是 "dev"
 }
 ```
 
-Turbo 运行每个包的 `dev` 脚本，从而调用 portless。portless 读取配置、检测包管理器，并通过代理运行 `pnpm run dev:app`（或 yarn/bun/npm）。无需对 [`turbo.json`](https://github.com/vercel-labs/portless/blob/main/turbo.json) 做任何更改。
+Turbo 运行每个包的 `dev` 脚本，从而调用 portless。portless 读取配置、检测包管理器，并通过代理运行 `pnpm run dev:app`（或 yarn/bun/npm）。无需对 `turbo.json` 或 `turbo.jsonc` 做任何更改。
 
 根目录下的 `pnpm dev` 照常通过 turbo 运行。未安装 portless 的人可以直接运行 `pnpm run dev:app`。
+
+当 `portless` 从 workspace 根目录运行时，只要 `turbo.json` 或 `turbo.jsonc` 可读，它就会使用现有的 Turbo 集成来保留任务顺序。在根目录的 portless 配置中设置 `"turbo": false` 可改为使用直接派生。
 
 ## 在 package.json 中使用
 
@@ -166,6 +175,8 @@ Turbo 运行每个包的 `dev` 脚本，从而调用 portless。portless 读取�
 
 然后运行 `portless` 或 `portless run` 经由代理访问。
 
+按下 Ctrl+C 时，portless 会转发中断信号并等待命令的进程树退出。再次按下 Ctrl+C 会转发另一次中断。剩余的子进程会在短暂的宽限期后被终止。
+
 ## 子域名
 
 用子域名组织服务：
@@ -178,7 +189,7 @@ portless docs.myapp next dev
 # -> https://docs.myapp.localhost
 ```
 
-默认情况下，只有显式注册的子域名会被路由（严格模式）。启动代理时使用 `--wildcard`，可让已注册路由的任意子域名回退到该应用（例如 `tenant1.myapp.localhost` 无需额外注册即可路由到 `myapp` 应用）。
+默认情况下，只有显式注册的子域名会被路由（严格模式）。启动代理时使用 `--wildcard`，可让已注册路由的任意子域名回退到该应用（例如 `tenant1.myapp.localhost` 无需额外注册即可路由到 `myapp` 应用）。当多个已注册路由都是某个主机名的父路由时，最具体的一个优先（`admin.api.myapp.localhost` 会路由到 `api.myapp`，而不是 `myapp`）。
 
 ## Git Worktrees
 
@@ -385,7 +396,7 @@ portless doctor                  # 检查代理、路由、DNS 以及 CA 信任
 portless trust                   # 将本地 CA 添加到系统信任存储
 portless clean                   # 移除状态、CA 信任项以及 hosts 区块
 portless prune                   # 杀掉崩溃会话遗留的孤立开发服务器
-portless hosts sync              # 将路由添加到 /etc/hosts（修复 Safari）
+portless hosts sync              # 将路由与 /etc/hosts 对齐（修复 Safari）
 portless hosts clean             # 从 /etc/hosts 移除 portless 条目
 
 # 禁用 portless（直接运行命令）
@@ -476,11 +487,13 @@ macOS/Linux 可能会提示输入 `sudo`。通过 `--cert` 和 `--key` 传入的
 如果 Safari 找不到你的 `.localhost` URL：
 
 ```bash
-portless hosts sync    # 将当前路由添加到 /etc/hosts
+portless hosts sync    # 将当前路由与 /etc/hosts 对齐
 portless hosts clean   # 稍后清理
 ```
 
-默认情况下会自动同步 `/etc/hosts` 中的路由主机名（`.localhost`、自定义 TLD、LAN `.local`）。设置 `PORTLESS_SYNC_HOSTS=0` 可禁用。
+默认情况下会自动同步 `/etc/hosts` 中的路由主机名（`.localhost`、自定义 TLD、LAN `.local`）。设置 `PORTLESS_SYNC_HOSTS=0` 可禁用。如果某个路由主机名无法解析，注册它的命令会给出警告，并提示你运行 `portless hosts sync`。
+
+手动同步会将 portless 管理的条目与当前路由对齐，并在没有路由时移除过期条目。写入前必须成功读取 hosts 文件，并逐条校验写入结果。读取或校验失败时会走正常的同步错误路径。
 
 ## 故障排查
 
