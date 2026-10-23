@@ -45,8 +45,8 @@ export const features = [
   },
   {
     icon: "🤝",
-    title: "Tailscale / ngrok 共享",
-    desc: "--tailscale 在 tailnet 上共享，--funnel 暴露到公共互联网，--ngrok 生成公共隧道 URL。",
+    title: "Tailscale / ngrok / Cloudflare 共享",
+    desc: "--tailscale 在 tailnet 上共享，--funnel 暴露到公共互联网，--ngrok 与 --cloudflare 生成公共隧道 URL。",
   },
 ];
 
@@ -106,7 +106,7 @@ export const commands = [
   },
   {
     cmd: "portless list",
-    desc: "显示活动路由",
+    desc: "显示活动路由和运行时长",
   },
   {
     cmd: "portless doctor",
@@ -122,7 +122,7 @@ export const commands = [
   },
   {
     cmd: "portless prune",
-    desc: "杀掉崩溃会话遗留的孤立开发服务器",
+    desc: "杀掉崩溃会话遗留的孤立开发服务器（run 启动时也会执行）",
   },
   {
     cmd: "portless hosts sync",
@@ -169,6 +169,10 @@ export const commands = [
     desc: "以 LAN 模式启动服务",
   },
   {
+    cmd: "portless service install --wildcard",
+    desc: "在服务中持久化通配符路由",
+  },
+  {
     cmd: "portless service status",
     desc: "显示服务与代理状态",
   },
@@ -195,6 +199,7 @@ export const options = [
   { flag: "--tailscale", desc: "在你的 Tailscale 网络（tailnet）上共享应用" },
   { flag: "--funnel", desc: "通过 Tailscale Funnel 公开共享应用" },
   { flag: "--ngrok", desc: "通过 ngrok 公开共享应用" },
+  { flag: "--cloudflare", desc: "通过 Cloudflare Quick Tunnel 公开共享应用" },
   { flag: "--force", desc: "杀掉现有进程并接管其路由" },
   { flag: "--name <name>", desc: "使用 <name> 作为应用名" },
 ];
@@ -211,12 +216,14 @@ export const envVars = [
   { name: "PORTLESS_TAILSCALE=1", desc: "在你的 Tailscale 网络上共享应用（同 --tailscale）", group: "配置" },
   { name: "PORTLESS_FUNNEL=1", desc: "通过 Tailscale Funnel 公开共享应用（同 --funnel）", group: "配置" },
   { name: "PORTLESS_NGROK=1", desc: "通过 ngrok 公开共享应用（同 --ngrok）", group: "配置" },
+  { name: "PORTLESS_CLOUDFLARE=1", desc: "通过 Cloudflare Quick Tunnel 公开共享应用（同 --cloudflare）", group: "配置" },
   { name: "PORTLESS_STATE_DIR", desc: "覆盖状态目录", group: "配置" },
   { name: "PORT", desc: "子进程应监听的临时端口", group: "注入到子进程" },
   { name: "HOST", desc: "通常为 127.0.0.1（LAN 模式下 Expo 会省略）", group: "注入到子进程" },
   { name: "PORTLESS_URL", desc: "主要公开 URL（例如 https://myapp.localhost）", group: "注入到子进程" },
   { name: "PORTLESS_TAILSCALE_URL", desc: "应用的 Tailscale URL（当 --tailscale 生效时）", group: "注入到子进程" },
   { name: "PORTLESS_NGROK_URL", desc: "应用的 ngrok URL（当 --ngrok 生效时）", group: "注入到子进程" },
+  { name: "PORTLESS_CLOUDFLARE_URL", desc: "应用的 Cloudflare URL（当 --cloudflare 生效时）", group: "注入到子进程" },
   { name: "NODE_EXTRA_CA_CERTS", desc: "portless CA 的路径（当 HTTPS 生效时）", group: "注入到子进程" },
 ];
 
@@ -291,6 +298,14 @@ portless myapp --funnel next dev
 # -> https://abc123.ngrok.app (公共)`,
   },
   {
+    icon: "☁️",
+    title: "Cloudflare 共享",
+    desc: "通过 Cloudflare Quick Tunnel 暴露到公共互联网，无需账号。不支持 SSE，最多 200 个并发请求，每次运行都会获得新 URL。",
+    code: `portless myapp --cloudflare next dev
+# -> https://myapp.localhost              (本地)
+# -> https://<random>.trycloudflare.com   (公共)`,
+  },
+  {
     icon: "⚙️",
     title: "随系统启动",
     desc: "将代理安装为操作系统开机启动服务，重启后无需手动启动即可获得干净的 HTTPS URL。",
@@ -309,6 +324,19 @@ portless hosts sync     # 修复 Safari DNS
 portless hosts clean    # 清理 hosts 条目
 portless clean          # 移除所有状态`,
   },
+  {
+    icon: "🛡️",
+    title: "404 页面与错误响应",
+    desc: "portless 自身返回错误（404 / 502 / 508）时，浏览器收到品牌化 HTML 页面，curl、fetch 等非 HTML 客户端收到 JSON。404 页会列出活动应用及运行时长，支持按主机名筛选和最新优先排序。",
+    code: `# 浏览器（Accept: text/html）→ 品牌化 HTML 页面
+# curl / fetch（非 text/html）→ JSON 错误体
+
+{
+  "error": "bad_gateway",
+  "upstream": "myapp.localhost",
+  "message": "..."
+}`,
+  },
 ];
 
 export const requirements = [
@@ -318,4 +346,5 @@ export const requirements = [
   { label: "Windows", value: "" },
   { label: "Tailscale CLI", value: "可选" },
   { label: "ngrok CLI", value: "可选" },
+  { label: "cloudflared CLI", value: "可选" },
 ];
