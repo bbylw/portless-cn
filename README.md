@@ -272,6 +272,8 @@ flowchart TD
 
 在 LAN 模式之外，代理及其 HTTP 重定向监听器仅绑定到 IPv4 和 IPv6 回环地址 `127.0.0.1` 和 `::1`。它们不接受通过 LAN、VPN 或其他网络接口的连入。
 
+当 portless 自身返回错误时（未知主机返回 404、应用不可达返回 502、请求循环返回 508），浏览器会看到带品牌样式的 HTML 页面。而 `Accept` 头不包含 `text/html` 的客户端（例如 curl 或 `fetch`）会收到简短的 JSON 响应体，例如 `{"error":"bad_gateway","upstream":"myapp.localhost","message":"..."}`。来自你自己应用的响应会原样转发。
+
 ## HTTP/2 + HTTPS
 
 默认启用 HTTPS（带 HTTP/2）。浏览器将每个主机的 HTTP/1.1 连接数限制为 6 条，这会成为服务大量未打包文件的开发服务器（Vite、Nuxt 等）的瓶颈。HTTP/2 通过单一连接多路复用所有请求。
@@ -381,6 +383,17 @@ portless myapp --ngrok next dev
 
 需要安装并已认证的 ngrok CLI。如果 ngrok 报告认证错误，运行 `ngrok config add-authtoken <token>` 后重试。
 
+## Cloudflare 共享
+
+通过 Cloudflare Quick Tunnel 将开发服务器暴露到公共互联网，无需 Cloudflare 账号：
+
+```bash
+portless myapp --cloudflare next dev
+# -> https://<random>.trycloudflare.com  (公共)
+```
+
+设置 `PORTLESS_CLOUDFLARE=1` 可默认启用。`portless list` 会显示 Cloudflare URL，应用会通过 `PORTLESS_CLOUDFLARE_URL` 获得该地址。可与 `--ngrok`、`--tailscale` 或 `--funnel` 组合使用。隧道会在应用退出时停止。Quick Tunnel 不支持 Server-Sent Events，最多允许 200 个在途请求，且每次运行都会获得新的 URL。需要 PATH 中存在 [`cloudflared`](https://developers.cloudflare.com/tunnel/downloads/) CLI。
+
 ## 命令
 
 ```bash
@@ -391,11 +404,11 @@ portless <name> <cmd> [args...]  # 在 https://<name>.localhost 运行应用
 portless alias <name> <port>     # 注册一条静态路由（例如用于 Docker）
 portless alias <name> <port> --force  # 覆盖已有路由
 portless alias --remove <name>   # 移除一条静态路由
-portless list                    # 显示活动路由
+portless list                    # 显示活动路由和运行时长
 portless doctor                  # 检查代理、路由、DNS 以及 CA 信任
 portless trust                   # 将本地 CA 添加到系统信任存储
 portless clean                   # 移除状态、CA 信任项以及 hosts 区块
-portless prune                   # 杀掉崩溃会话遗留的孤立开发服务器
+portless prune                   # 杀掉崩溃会话遗留的孤立开发服务器（run 启动时也会执行）
 portless hosts sync              # 将路由与 /etc/hosts 对齐（修复 Safari）
 portless hosts clean             # 从 /etc/hosts 移除 portless 条目
 
@@ -438,6 +451,7 @@ portless service uninstall       # 移除开机启动服务
 --tailscale                     在你的 Tailscale 网络（tailnet）上共享应用
 --funnel                        通过 Tailscale Funnel 公开共享应用
 --ngrok                         通过 ngrok 公开共享应用
+--cloudflare                    通过 Cloudflare Quick Tunnel 公开共享应用
 --force                         杀掉现有进程并接管其路由
 --name <name>                   使用 <name> 作为应用名
 ```
@@ -457,6 +471,7 @@ PORTLESS_SYNC_HOSTS=0           禁用 /etc/hosts 的自动同步（默认开启
 PORTLESS_TAILSCALE=1            在你的 Tailscale 网络上共享应用（同 --tailscale）
 PORTLESS_FUNNEL=1               通过 Tailscale Funnel 公开共享应用（同 --funnel）
 PORTLESS_NGROK=1                通过 ngrok 公开共享应用（同 --ngrok）
+PORTLESS_CLOUDFLARE=1           通过 Cloudflare Quick Tunnel 公开共享应用（同 --cloudflare）
 PORTLESS_STATE_DIR=<path>       覆盖状态目录
 
 # 注入到子进程
@@ -465,6 +480,7 @@ HOST                            通常为 127.0.0.1（LAN 模式下 Expo 会省�
 PORTLESS_URL                    主要公开 URL（例如 https://myapp.localhost）
 PORTLESS_TAILSCALE_URL          应用的 Tailscale URL（当 --tailscale 生效时）
 PORTLESS_NGROK_URL              应用的 ngrok URL（当 --ngrok 生效时）
+PORTLESS_CLOUDFLARE_URL         应用的 Cloudflare URL（当 --cloudflare 生效时）
 NODE_EXTRA_CA_CERTS             portless CA 的路径（当 HTTPS 生效时）
 ```
 
@@ -555,3 +571,4 @@ pnpm format           # 使用 Prettier 格式化所有文件
 - macOS、Linux 或 Windows
 - Tailscale CLI（可选，用于 `--tailscale` 和 `--funnel`）
 - ngrok CLI（可选，用于 `--ngrok`）
+- cloudflared CLI（可选，用于 `--cloudflare`）

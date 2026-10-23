@@ -9,7 +9,7 @@ const iconMap: Record<string, React.ReactNode> = {
   "Git Worktree 感知": <IconGit size={20} />,
   "LAN 模式": <IconBroadcast size={20} />,
   "框架自动适配": <IconLayers size={20} />,
-  "Tailscale / ngrok 共享": <IconShare size={20} />,
+  "Tailscale / ngrok / Cloudflare 共享": <IconShare size={20} />,
 };
 
 export function Features() {
