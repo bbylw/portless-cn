@@ -9,7 +9,7 @@ export function Footer() {
             <div className="flex items-center gap-3">
               <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="9" fill="url(#fg)"/><rect width="32" height="32" rx="9" fill="url(#fh)"/><path d="M9.5 23.5V15.5a6.5 6.5 0 0 1 13 0v8" stroke="white" strokeWidth="3.4" strokeLinecap="round" fill="none"/><path d="M6.5 23.5h19" stroke="white" strokeOpacity="0.5" strokeWidth="2.2" strokeLinecap="round"/><defs><linearGradient id="fg" x1="4" y1="4" x2="28" y2="28"><stop stopColor="#22c55e"/><stop offset="1" stopColor="#16a34a"/></linearGradient><linearGradient id="fh" x1="0" y1="0" x2="32" y2="16"><stop stopColor="white" stopOpacity="0.18"/><stop offset="1" stopColor="white" stopOpacity="0"/></linearGradient></defs></svg>
               <span className="font-semibold tracking-tight">portless</span>
-              <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-medium tracking-wider text-emerald-300">v0.15.9</span>
+              <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-medium tracking-wider text-emerald-300">v0.15.11</span>
               <span className="rounded-full bg-white/5 border border-white/10 px-2 py-0.5 text-[10px] font-medium tracking-widest uppercase text-zinc-400">pre-1.0</span>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-zinc-400">用稳定、具名的 <span className="text-white font-mono text-xs bg-white/10 px-1 py-0.5 rounded">.localhost</span> URL 取代端口号，用于本地开发。为人类和智能体设计。</p>
