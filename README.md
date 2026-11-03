@@ -39,7 +39,7 @@ portless myapp next dev
 
 默认启用 HTTPS（带 HTTP/2）。首次运行时，portless 会生成一个本地 CA、信任它，并绑定 443 端口（在 macOS/Linux 上通过 sudo 自动提权）。使用 `--no-tls` 则使用纯 HTTP。
 
-代理在你运行应用时自动启动。会通过 `PORT` 环境变量分配一个随机端口（4000–4999）。大多数框架（Next.js、Express、Nuxt 等）会自动读取该变量。对于忽略 `PORT` 的框架（Vite、VitePlus、Astro、React Router、Angular、Expo、React Native），portless 会自动注入正确的 `--port` 参数，并在需要时同时注入匹配的 `--host` 参数。注入会穿透到以框架或已知运行器开头的 package 脚本（`"dev": "vite"`、`"dev": "bunx vite"`）。只有框架的服务端命令会获得这些参数（`dev`、`serve`、`preview`、`start`、裸 `vite` 或 `vite [root]`）；不提供服务的命令（如 `vite build`、`vite optimize`、`vp test` 或 `astro check`）会拒绝这些参数并原样保留。Expo 的连接模式（`--localhost`、`--lan`、`--tunnel`）会被保留，同时仍然注入所分配的端口。portless 无法归类的脚本也会原样保留：在它未跟踪参数语法的 CLI 上，子命令之前的某个参数（`vp --mode dev build`）。当附加参数对其无效时，portless 同样会保留脚本原样：复合命令（`&&`、`|`、`;`）、尾部 `#` 注释、其自身的 `--` 选项终止符、环境前缀（`NODE_ENV=production vite`）、委派给另一个脚本（`"dev": "npm run dev:vite"`），或脚本名之前带有运行器参数（`bun run --bun dev`）。这些情况会保留它们自己的端口，因此需要你在脚本中自行设置。
+代理在你运行应用时自动启动。会通过 `PORT` 环境变量分配一个随机端口（4000–4999）。大多数框架（Next.js、Express、Nuxt 等）会自动读取该变量。对于忽略 `PORT` 的框架（Vite、VitePlus、VitePress、Astro、React Router、Angular、Expo、React Native、Wrangler），portless 会自动注入正确的 `--port` 参数，并在需要时同时注入匹配的 `--host` 参数（Wrangler 为 `--ip`）。注入会穿透到以框架或已知运行器开头的 package 脚本（`"dev": "vite"`、`"dev": "bunx vite"`）。只有框架的服务端命令会获得这些参数（`dev`、`serve`、`preview`、`start`、裸 `vite` 或 `vite [root]`）；不提供服务的命令（如 `vite build`、`vite optimize`、`vp test` 或 `astro check`）会拒绝这些参数并原样保留。Expo 的连接模式（`--localhost`、`--lan`、`--tunnel`）会被保留，同时仍然注入所分配的端口。portless 无法归类的脚本也会原样保留：在它未跟踪参数语法的 CLI 上，子命令之前的某个参数（`vp --mode dev build`）。当附加参数对其无效时，portless 同样会保留脚本原样：复合命令（`&&`、`|`、`;`）、尾部 `#` 注释、其自身的 `--` 选项终止符、环境前缀（`NODE_ENV=production vite`）、委派给另一个脚本（`"dev": "npm run dev:vite"`），或脚本名之前带有运行器参数（`bun run --bun dev`）。这些情况会保留它们自己的端口，因此需要你在脚本中自行设置。
 
 自动启动时，portless 会复用最近一次代理运行时的配置（端口、TLS、TLD），因此重启或重启机器后不会静默回退到默认值。显式环境变量（`PORTLESS_PORT`、`PORTLESS_HTTPS` 等）始终优先。
 
@@ -272,7 +272,7 @@ flowchart TD
 
 在 LAN 模式之外，代理及其 HTTP 重定向监听器仅绑定到 IPv4 和 IPv6 回环地址 `127.0.0.1` 和 `::1`。它们不接受通过 LAN、VPN 或其他网络接口的连入。
 
-当 portless 自身返回错误时（未知主机返回 404、应用不可达返回 502、请求循环返回 508），浏览器会看到带品牌样式的 HTML 页面。而 `Accept` 头不包含 `text/html` 的客户端（例如 curl 或 `fetch`）会收到简短的 JSON 响应体，例如 `{"error":"bad_gateway","upstream":"myapp.localhost","message":"..."}`。来自你自己应用的响应会原样转发。
+当 portless 自身返回错误时（未知主机返回 404、误导向请求返回 421、应用不可达返回 502、请求循环返回 508），浏览器会看到带品牌样式的 HTML 页面。而 `Accept` 头不包含 `text/html` 的客户端（例如 curl 或 `fetch`）会收到简短的 JSON 响应体，例如 `{"error":"bad_gateway","upstream":"myapp.localhost","message":"..."}`。来自你自己应用的响应会原样转发。portless TLD 之外的主机名（例如被 DNS 屏蔽列表指向 127.0.0.1 的站点）会得到 421 Misdirected Request，而不是应用列表。
 
 ## HTTP/2 + HTTPS
 
@@ -281,6 +281,29 @@ flowchart TD
 WebSocket 在两种协议版本上都可工作，因此开发服务器 HMR（Next.js、Vite 等）可通过代理工作：HTTP/1.1 的 `Upgrade` 请求原样转发，而通过 HTTP/2 连接打开的 WebSocket 使用扩展 CONNECT（RFC 8441）。
 
 首次运行时，portless 会生成一个本地 CA 并将其添加到系统信任存储。无浏览器警告，无需手动设置。
+
+## 非特权模式
+
+低于 1024 的端口通常需要 root，因此 portless 会通过 `sudo` 提权来绑定 443 或 80。在无法提权的机器上——例如受管控的笔记本电脑、CI 运行器，或没有终端可输入密码的智能体会话——可以使用 `--unprivileged` 启动代理：
+
+```bash
+portless proxy start --unprivileged
+# -> http://myapp.localhost，无 sudo 提示，不安装任何东西
+```
+
+macOS 只允许非 root 进程在通配符地址上绑定低于 1024 的端口，因此代理会改为绑定 `0.0.0.0` 和 `::`，然后在 accept 时以及每个请求、每次升级时再次拒绝所有非回环对端连接。结果仍是仅回环（loopback-only）的代理，但无需 root。Windows 没有特权端口规则，因此该标志在那里只改变绑定地址。Linux 通过 sysctl 划定边界；portless 会检查它，当端口仍不可达时，会带上确切的命令直接报错退出，而不是回退到其他端口：
+
+```bash
+sudo sysctl -w net.ipv4.ip_unprivileged_port_start=80   # 每台机器执行一次
+```
+
+该模式承诺不出现任何提示，因此默认在端口 80 上以纯 HTTP 提供服务：把生成的 CA 安装进信任存储本身就是一种提示。无论如何，`*.localhost` 都是安全上下文，因此 `Secure` Cookie 和 Service Worker 在 HTTP 上也能工作。传入 `--https` 可在 443 上保持 HTTPS；此模式会生成 CA 但绝不安装它，因此在你自己运行一次 `portless trust` 之前，浏览器会发出警告。
+
+它也绝不写入 hosts 文件，因为这需要 root：此模式下自动 hosts 同步是关闭的，同时设置 `PORTLESS_SYNC_HOSTS=1` 会被拒绝。`.localhost` 名称在浏览器中无需 hosts 文件即可解析。对于 Safari 或自定义 TLD，请自己运行一次 `portless hosts sync`；使用自定义 TLD 时代理启动时会提示这一点。
+
+该模式会记录在状态目录中，因此自动启动会复用它，`PORTLESS_UNPRIVILEGED=1` 无需标志即可选中它。它绝不请求 `sudo`，这也意味着无 TTY 时不退出的规则不适用：代理可以在全新机器上由脚本或智能体自动启动。在 LAN 模式下，该标志只省去 sudo 这一步，因为 LAN 模式本来就需要远程对端。在 `service install` 下服务仍以 root 运行，因此该标志在那里并不能消除提示，但会保留其他效果：除非传入 `--https`，否则在端口 80 上以纯 HTTP 提供服务、关闭 hosts 同步、仅接受回环对端。
+
+在开启了应用防火墙的 Mac 上，首次通配符绑定会为 Node 弹出「是否允许传入连接」提示。无需密码，无论你怎么回答，代理仍会拒绝非回环对端。
 
 ```bash
 # 使用你自己的证书（例如来自 mkcert）
@@ -293,7 +316,7 @@ portless proxy start --no-tls
 portless trust
 ```
 
-在 Linux 上，`portless trust` 支持 Debian/Ubuntu、Arch、Fedora/RHEL/CentOS 以及 openSUSE（通过 `update-ca-certificates` 或 `update-ca-trust`）。在 Windows 上，它使用 `certutil` 将 CA 添加到系统信任存储。在 WSL 上，它会同时更新 Linux 信任存储和 Windows 当前用户的 Root 存储，以便 Windows 浏览器信任 portless 的 HTTPS 证书。
+在 Linux 上，`portless trust` 支持 Debian/Ubuntu、Arch、Fedora/RHEL/CentOS 以及 openSUSE（通过 `update-ca-certificates` 或 `update-ca-trust`）。在 Windows 上，它使用 `certutil` 将 CA 添加到系统信任存储。在 WSL 上，它会同时更新 Linux 信任存储和 Windows 当前用户的 Root 存储，以便 Windows 浏览器信任 portless 的 HTTPS 证书。在 WSL2 宿主上运行的 Linux 容器只使用 Linux 信任存储。
 
 ## 随系统启动
 
@@ -420,6 +443,7 @@ portless proxy start             # 启动 HTTPS 代理（端口 443，守护进�
 portless proxy start --no-tls    # 不启用 HTTPS 启动（端口 80）
 portless proxy start --lan       # 以 LAN 模式启动（用于设备的 mDNS .local）
 portless proxy start -p 1355     # 在自定义端口启动（无需 sudo）
+portless proxy start --unprivileged  # 不用 sudo 在端口 80 上以纯 HTTP 启动（通配符绑定，仅回环对端）
 portless proxy start --foreground  # 以前台方式启动（用于调试）
 portless proxy start --wildcard  # 允许未注册子域名回退到父路由
 portless proxy stop              # 停止代理
@@ -445,6 +469,7 @@ portless service uninstall       # 移除开机启动服务
 --foreground                    以前台方式运行代理，而非守护进程
 --tld <tld>                     使用自定义 TLD 代替 .localhost；重复以使用多个
 --wildcard                      允许未注册子域名回退到父路由
+--unprivileged                  不用 sudo 绑定 1024 以下端口（通配符绑定、仅回环对端，除非 --https 否则纯 HTTP）
 --state-dir <path>              配合 service install 使用自定义状态目录
 --script <name>                 运行特定的 package.json 脚本（默认：dev）
 --app-port <number>             为应用使用固定端口（跳过自动分配）
@@ -471,6 +496,7 @@ PORTLESS_SYNC_HOSTS=0           禁用 /etc/hosts 的自动同步（默认开启
 PORTLESS_TAILSCALE=1            在你的 Tailscale 网络上共享应用（同 --tailscale）
 PORTLESS_FUNNEL=1               通过 Tailscale Funnel 公开共享应用（同 --funnel）
 PORTLESS_NGROK=1                通过 ngrok 公开共享应用（同 --ngrok）
+PORTLESS_UNPRIVILEGED=1         不用 sudo 绑定 1024 以下端口（同 --unprivileged）
 PORTLESS_CLOUDFLARE=1           通过 Cloudflare Quick Tunnel 公开共享应用（同 --cloudflare）
 PORTLESS_STATE_DIR=<path>       覆盖状态目录
 
@@ -484,7 +510,36 @@ PORTLESS_CLOUDFLARE_URL         应用的 Cloudflare URL（当 --cloudflare 生�
 NODE_EXTRA_CA_CERTS             portless CA 的路径（当 HTTPS 生效时）
 ```
 
-> **保留名称：** `run`、`get`、`alias`、`hosts`、`list`、`doctor`、`trust`、`clean`、`prune`、`proxy` 和 `service` 是子命令，不能直接用作应用名。使用 `portless run <cmd>` 从你的项目推断名称，或使用 `portless --name <name> <cmd>` 强制指定任意名称（包括保留名称）。
+> **保留名称：** `run`、`get`、`alias`、`hosts`、`list`、`doctor`、`trust`、`clean`、`prune`、`proxy`、`service` 和 `mcp` 是子命令，不能直接用作应用名。使用 `portless run <cmd>` 从你的项目推断名称，或使用 `portless --name <name> <cmd>` 强制指定任意名称（包括保留名称）。
+
+## MCP 服务器
+
+```bash
+portless mcp [--tools <profiles>]
+```
+
+启动一个 stdio MCP 服务器，通过标准输入输出交换按行分隔的 JSON-RPC 消息。`--tools` 接受逗号分隔的配置组。默认为 `core`；`default` 是 `core` 的别名，`full` 是 `all` 的别名。
+
+- `core`：`list`、`get`、`alias_add`、`alias_remove`、`tools_profiles`
+- `proxy`：`proxy_start`、`proxy_stop`
+- `diagnostics`：`doctor`、`prune`、`version`
+- `all`：上述配置组中的所有工具
+
+除 `tools_profiles` 外，所有工具都接受共享的 `cwd`、`extraArgs` 和 `timeoutMs` 参数。`cwd` 默认为服务器的工作目录，`extraArgs` 会追加在工具的类型化参数之后，`timeoutMs` 默认为 120000。错误的参数（未知或类型不对）以及调用未启用的工具会返回带 `isError: true` 的工具结果并说明修复方法，让模型能够纠正调用；未知参数会列出该工具自身的参数。
+
+服务器不暴露开发服务器启动命令：`portless run`、`portless <name> <cmd>`、`portless --name <name> <cmd>` 以及零参数模式都会在前台启动开发服务器，而 MCP 没有脱离（detached）形式。`portless proxy start --foreground` 会阻塞。`portless trust`、`portless clean`、`portless hosts sync`、`portless hosts clean` 以及 `portless service` 可能提示 sudo 并需要 TTY。`portless mcp` 和 `portless mcp --help` 被省略，因为它们分别是服务器本身和面向人类的帮助。
+
+默认 `core` 配置组使用以下客户端配置：
+
+```json
+{ "mcpServers": { "portless": { "command": "portless", "args": ["mcp"] } } }
+```
+
+启用所有工具使用以下配置：
+
+```json
+{ "mcpServers": { "portless": { "command": "portless", "args": ["mcp", "--tools", "all"] } } }
+```
 
 ## 卸载 / 重置
 

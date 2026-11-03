@@ -176,6 +176,28 @@ export function IconStethoscope(props: IconProps) {
   );
 }
 
+// MCP server (chip with pins)
+export function IconChip(props: IconProps) {
+  return (
+    <Wrap {...props}>
+      <rect x="7" y="7" width="10" height="10" rx="2" />
+      <rect x="10.2" y="10.2" width="3.6" height="3.6" rx="0.8" fill="currentColor" opacity={0.35} />
+      <path d="M10 7V4.5M14 7V4.5M10 19.5V17M14 19.5V17M7 10H4.5M7 14H4.5M19.5 10H17M19.5 14H17" />
+    </Wrap>
+  );
+}
+
+// Unprivileged mode (open padlock)
+export function IconUnlock(props: IconProps) {
+  return (
+    <Wrap {...props}>
+      <rect x="4.5" y="10.5" width="12" height="9.5" rx="2.2" />
+      <path d="M15.5 10.5V7a4 4 0 0 0-7.6-1.7" />
+      <circle cx="10.5" cy="15.2" r="1.1" fill="currentColor" stroke="none" />
+    </Wrap>
+  );
+}
+
 // Logo mark (for navbar/footer) - crisp P
 export function LogoMark({ size = 32 }: { size?: number }) {
   return (

@@ -41,7 +41,7 @@ export const features = [
   {
     icon: "⚡",
     title: "框架自动适配",
-    desc: "为 Next.js、Vite、Astro、Expo 等自动注入正确的 --port 和 --host 参数。",
+    desc: "为 Next.js、Vite、VitePress、Astro、Expo、Wrangler 等自动注入正确的 --port 和 --host 参数。",
   },
   {
     icon: "🤝",
@@ -133,6 +133,10 @@ export const commands = [
     desc: "从 /etc/hosts 移除 portless 条目",
   },
   {
+    cmd: "portless mcp [--tools <profiles>]",
+    desc: "启动 stdio MCP 服务器，供 AI 智能体查询路由、管理别名、控制代理并诊断",
+  },
+  {
     cmd: "portless proxy start",
     desc: "启动 HTTPS 代理（端口 443，守护进程）",
   },
@@ -147,6 +151,10 @@ export const commands = [
   {
     cmd: "portless proxy start -p 1355",
     desc: "在自定义端口启动（无需 sudo）",
+  },
+  {
+    cmd: "portless proxy start --unprivileged",
+    desc: "不用 sudo 在端口 80 上以纯 HTTP 启动（通配符绑定，仅回环对端）",
   },
   {
     cmd: "portless proxy start --foreground",
@@ -183,7 +191,7 @@ export const commands = [
 ];
 
 export const options = [
-  { flag: "-p, --port <number>", desc: "代理端口（默认：443，使用 --no-tls 时为 80）" },
+  { flag: "-p, --port <number>", desc: "代理端口（默认：443，使用 --no-tls 时为 80）。仅在绑定需要 root 时才请求 sudo；提权失败会报错退出而不是换端口" },
   { flag: "--no-tls", desc: "禁用 HTTPS（在端口 80 上使用纯 HTTP）" },
   { flag: "--https", desc: "启用 HTTPS（默认，为兼容性而接受）" },
   { flag: "--lan", desc: "启用 LAN 模式（用于真实设备的 mDNS .local）" },
@@ -193,6 +201,7 @@ export const options = [
   { flag: "--foreground", desc: "以前台方式运行代理，而非守护进程" },
   { flag: "--tld <tld>", desc: "使用自定义 TLD 代替 .localhost；重复以使用多个" },
   { flag: "--wildcard", desc: "允许未注册子域名回退到父路由" },
+  { flag: "--unprivileged", desc: "不用 sudo 绑定 1024 以下端口（通配符绑定、仅回环对端，除非 --https 否则纯 HTTP）" },
   { flag: "--state-dir <path>", desc: "配合 service install 使用自定义状态目录" },
   { flag: "--script <name>", desc: "运行特定的 package.json 脚本（默认：dev）" },
   { flag: "--app-port <number>", desc: "为应用使用固定端口（跳过自动分配）" },
@@ -216,6 +225,7 @@ export const envVars = [
   { name: "PORTLESS_TAILSCALE=1", desc: "在你的 Tailscale 网络上共享应用（同 --tailscale）", group: "配置" },
   { name: "PORTLESS_FUNNEL=1", desc: "通过 Tailscale Funnel 公开共享应用（同 --funnel）", group: "配置" },
   { name: "PORTLESS_NGROK=1", desc: "通过 ngrok 公开共享应用（同 --ngrok）", group: "配置" },
+  { name: "PORTLESS_UNPRIVILEGED=1", desc: "不用 sudo 绑定 1024 以下端口（同 --unprivileged）", group: "配置" },
   { name: "PORTLESS_CLOUDFLARE=1", desc: "通过 Cloudflare Quick Tunnel 公开共享应用（同 --cloudflare）", group: "配置" },
   { name: "PORTLESS_STATE_DIR", desc: "覆盖状态目录", group: "配置" },
   { name: "PORT", desc: "子进程应监听的临时端口", group: "注入到子进程" },
@@ -327,7 +337,7 @@ portless clean          # 移除所有状态`,
   {
     icon: "🛡️",
     title: "404 页面与错误响应",
-    desc: "portless 自身返回错误（404 / 502 / 508）时，浏览器收到品牌化 HTML 页面，curl、fetch 等非 HTML 客户端收到 JSON。404 页会列出活动应用及运行时长，支持按主机名筛选和最新优先排序。",
+    desc: "portless 自身返回错误（404 / 421 / 502 / 508）时，浏览器收到品牌化 HTML 页面，curl、fetch 等非 HTML 客户端收到 JSON。404 页会列出活动应用及运行时长，支持按主机名筛选和最新优先排序。portless TLD 之外的主机名会得到 421 Misdirected Request，而不是应用列表。",
     code: `# 浏览器（Accept: text/html）→ 品牌化 HTML 页面
 # curl / fetch（非 text/html）→ JSON 错误体
 
@@ -336,6 +346,25 @@ portless clean          # 移除所有状态`,
   "upstream": "myapp.localhost",
   "message": "..."
 }`,
+  },
+  {
+    icon: "🤖",
+    title: "MCP 服务器",
+    desc: "portless mcp 启动 stdio MCP 服务器，让 AI 智能体查询路由、管理静态别名、控制代理并进行诊断。工具按 core / proxy / diagnostics 配置组启用，all 启用全部。",
+    code: `{ "mcpServers": { "portless": { "command": "portless", "args": ["mcp"] } } }
+
+// 启用所有工具
+{ "mcpServers": { "portless": { "command": "portless", "args": ["mcp", "--tools", "all"] } } }`,
+  },
+  {
+    icon: "🔓",
+    title: "非特权模式",
+    desc: "--unprivileged 无需 sudo 即可绑定 1024 以下端口：默认在端口 80 上以纯 HTTP 提供服务，绑定通配符地址但仅接受回环对端。适合受管控设备、CI 运行器与没有终端的智能体会话。",
+    code: `portless proxy start --unprivileged
+# -> http://myapp.localhost，无 sudo 提示
+
+# Linux：每台机器执行一次
+sudo sysctl -w net.ipv4.ip_unprivileged_port_start=80`,
   },
 ];
 
