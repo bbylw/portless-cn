@@ -111,8 +111,8 @@ function highlight(code: string): ReactNode[] {
           key={i}
           className={`block rounded-md border-l-2 px-2.5 py-0.5 ${
             isAdd
-              ? "border-emerald-400/80 bg-emerald-500/[0.08]"
-              : "border-rose-400/70 bg-rose-500/[0.06]"
+              ? "border-emerald-400/80 bg-emerald-500/8"
+              : "border-rose-400/70 bg-rose-500/6"
           }`}
         >
           <span className={isAdd ? "token-add font-semibold select-none" : "token-del font-semibold select-none"}>
@@ -152,10 +152,10 @@ export function CodeBlock({ code, copyValue, label, meta, className = "" }: Code
 
   return (
     <div
-      className={`group relative overflow-hidden rounded-[14px] border border-white/[0.08] bg-[var(--color-code-bg)] shadow-[0_1px_3px_rgba(0,0,0,0.5),0_8px_24px_rgba(0,0,0,0.35)] ${className}`}
+      className={`group relative overflow-hidden rounded-[14px] border border-white/8 bg-code-bg shadow-[0_1px_3px_rgba(0,0,0,0.5),0_8px_24px_rgba(0,0,0,0.35)] ${className}`}
     >
       {label && (
-        <div className="flex h-10 items-center justify-between border-b border-white/[0.06] bg-white/[0.025] px-4">
+        <div className="flex h-10 items-center justify-between border-b border-white/6 bg-white/2.5 px-4">
           <div className="flex items-center gap-2.5">
             <div className="flex gap-1.5">
               <span className="size-2.5 rounded-full bg-[#ff5f56]/90 border border-black/15"></span>
@@ -204,7 +204,7 @@ export function CodeBlock({ code, copyValue, label, meta, className = "" }: Code
         >
           <code>{highlight(code)}</code>
         </pre>
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
       </div>
     </div>
   );

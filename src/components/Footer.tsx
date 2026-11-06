@@ -5,9 +5,9 @@ import { LogoSvg } from "./LogoSvg";
 export function Footer() {
   return (
     <footer className="relative border-t border-white/10 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
-      <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-[800px] rounded-full bg-gradient-to-r from-emerald-500/5 via-violet-500/5 to-transparent blur-2xl" />
-      <div className="relative mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8 py-10">
+      <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent pointer-events-none" />
+      <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-200 rounded-full bg-linear-to-r from-emerald-500/5 via-violet-500/5 to-transparent blur-2xl" />
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid gap-8 sm:grid-cols-3 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
             <div className="flex items-center gap-3">

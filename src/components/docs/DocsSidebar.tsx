@@ -17,7 +17,7 @@ export function DocsSidebar({ className = "" }: { className?: string }) {
                   `flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium transition ${
                     isActive
                       ? "bg-emerald-500/10 text-emerald-300 border border-emerald-500/15"
-                      : "border border-transparent text-zinc-400 hover:text-white hover:bg-white/[0.05]"
+                      : "border border-transparent text-zinc-400 hover:text-white hover:bg-white/5"
                   }`
                 }
               >

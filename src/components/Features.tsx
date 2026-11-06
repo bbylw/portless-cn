@@ -26,8 +26,8 @@ const badgeMap: Record<string, string> = {
 export function Features() {
   return (
     <section id="features" className="relative py-16 sm:py-24">
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.012] to-transparent" />
-      <div className="relative mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-white/[0.012] to-transparent" />
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium tracking-widest uppercase text-zinc-400">
             <span className="size-1.5 rounded-full bg-violet-500"></span> 核心能力
@@ -46,10 +46,10 @@ export function Features() {
             return (
               <div
                 key={f.title}
-                className="group card-hover relative overflow-hidden rounded-[18px] border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-white/[0.015] p-[1px]"
+                className="group card-hover relative overflow-hidden rounded-[18px] border border-white/7 bg-linear-to-b from-white/5 to-white/1.5 p-px"
               >
                 <div className="relative flex h-full flex-col rounded-[17px] bg-[#121214] p-5 transition duration-300 group-hover:bg-[#151518] sm:p-6">
-                  <div className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-gradient-to-br from-emerald-500/10 to-violet-500/10 opacity-0 blur-2xl transition duration-500 group-hover:opacity-100" />
+                  <div className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-linear-to-br from-emerald-500/10 to-violet-500/10 opacity-0 blur-2xl transition duration-500 group-hover:opacity-100" />
                   <div className="mb-4 flex items-center justify-between gap-2">
                     <div
                       className={`flex size-10 items-center justify-center rounded-xl border ${
@@ -61,7 +61,7 @@ export function Features() {
                       {iconMap[f.title]}
                     </div>
                     {badgeMap[f.title] && (
-                      <span className="rounded-md border border-white/[0.06] bg-white/[0.03] px-2 py-0.5 font-mono text-[10.5px] text-zinc-500 transition group-hover:border-white/10 group-hover:text-zinc-300">
+                      <span className="rounded-md border border-white/6 bg-white/3 px-2 py-0.5 font-mono text-[10.5px] text-zinc-500 transition group-hover:border-white/10 group-hover:text-zinc-300">
                         {badgeMap[f.title]}
                       </span>
                     )}
@@ -82,7 +82,7 @@ export function Features() {
           ].map((s) => (
             <div
               key={s.k}
-              className="rounded-2xl border border-white/[0.07] bg-white/[0.02] px-5 py-4 text-center transition hover:border-white/[0.12] hover:bg-white/[0.03]"
+              className="rounded-2xl border border-white/7 bg-white/2 px-5 py-4 text-center transition hover:border-white/12 hover:bg-white/3"
             >
               <div className="font-mono text-base font-bold tracking-tight text-white tabular-nums sm:text-lg">
                 {s.k}

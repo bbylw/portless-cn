@@ -45,7 +45,7 @@ function BackToTop() {
 
 export function LandingLayout() {
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+    <div className="min-h-screen bg-bg text-text">
       <ScrollProgress />
       <Navbar />
       <main>

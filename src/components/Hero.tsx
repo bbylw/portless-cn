@@ -74,16 +74,16 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
       <div className="pointer-events-none absolute inset-0 grid-bg grid-bg-fade opacity-[0.55]" />
-      <div className="pointer-events-none absolute -top-24 left-1/2 h-[680px] w-[1160px] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(34,197,94,0.12),_transparent_62%)] blur-2xl" />
-      <div className="pointer-events-none absolute top-28 right-[8%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle_at_center,_rgba(139,92,246,0.13),_transparent_70%)] blur-2xl" />
-      <div className="pointer-events-none absolute bottom-0 left-[10%] h-[360px] w-[600px] rounded-full bg-[radial-gradient(circle_at_center,_rgba(34,197,94,0.07),_transparent_70%)] blur-2xl" />
+      <div className="pointer-events-none absolute -top-24 left-1/2 h-170 w-290 -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(34,197,94,0.12),_transparent_62%)] blur-2xl" />
+      <div className="pointer-events-none absolute top-28 right-[8%] h-105 w-105 rounded-full bg-[radial-gradient(circle_at_center,_rgba(139,92,246,0.13),_transparent_70%)] blur-2xl" />
+      <div className="pointer-events-none absolute bottom-0 left-[10%] h-90 w-150 rounded-full bg-[radial-gradient(circle_at_center,_rgba(34,197,94,0.07),_transparent_70%)] blur-2xl" />
 
-      <div className="relative mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/[0.09] bg-white/[0.04] px-3.5 py-1.5 text-[12.5px] font-medium text-zinc-300 shadow-[0_1px_2px_rgba(0,0,0,0.25)] backdrop-blur">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/9 bg-white/4 px-3.5 py-1.5 text-[12.5px] font-medium text-zinc-300 shadow-[0_1px_2px_rgba(0,0,0,0.25)] backdrop-blur">
             <span className="relative flex size-2">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--color-brand)] opacity-60"></span>
-              <span className="relative inline-flex size-2 rounded-full bg-[var(--color-brand)] shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand opacity-60"></span>
+              <span className="relative inline-flex size-2 rounded-full bg-brand shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
             </span>
             <span>
               为人类和 <span className="font-semibold text-white">Agent</span> 设计
@@ -96,19 +96,19 @@ export function Hero() {
           </div>
 
           <h1 className="text-[38px] font-bold tracking-[-0.035em] leading-[1.12] text-balance sm:text-[56px] sm:leading-[1.08] lg:text-[66px]">
-            <span className="block bg-gradient-to-b from-white via-white to-zinc-200 bg-clip-text text-transparent">
+            <span className="block bg-linear-to-b from-white via-white to-zinc-200 bg-clip-text text-transparent">
               用具名的
             </span>
             <span className="mt-1 block">
               <span className="gradient-text">.localhost</span>
-              <span className="bg-gradient-to-b from-white via-white to-zinc-200 bg-clip-text text-transparent"> URL</span>
+              <span className="bg-linear-to-b from-white via-white to-zinc-200 bg-clip-text text-transparent"> URL</span>
             </span>
-            <span className="mt-1 block bg-gradient-to-b from-white via-white to-zinc-300 bg-clip-text text-transparent">
+            <span className="mt-1 block bg-linear-to-b from-white via-white to-zinc-300 bg-clip-text text-transparent">
               取代端口号
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-[660px] text-[16.5px] leading-[1.75] text-zinc-400 sm:text-[18px]">
+          <p className="mx-auto mt-6 max-w-165 text-[16.5px] leading-[1.75] text-zinc-400 sm:text-[18px]">
             portless 让本地开发服务器运行在稳定、具名的{" "}
             <span className="font-medium text-white">HTTPS URL</span> 上。
             <br className="hidden sm:inline" />
@@ -124,7 +124,7 @@ export function Hero() {
             </Link>
             <Link
               to="/docs/commands"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-7 py-3.5 text-[14.5px] font-medium text-white backdrop-blur transition duration-200 hover:border-white/20 hover:bg-white/10 active:scale-[0.98] sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/6 px-7 py-3.5 text-[14.5px] font-medium text-white backdrop-blur transition duration-200 hover:border-white/20 hover:bg-white/10 active:scale-[0.98] sm:w-auto"
             >
               <IconBrowserSmall size={16} />
               查看命令
@@ -132,7 +132,7 @@ export function Hero() {
             <button
               type="button"
               onClick={handleCopyInstall}
-              className="inline-flex w-full items-center justify-center gap-2.5 rounded-full border border-white/[0.08] bg-[#0e0e11]/90 px-4 py-3.5 font-mono text-[13px] text-zinc-300 shadow-inner transition duration-200 hover:border-emerald-500/35 hover:text-white active:scale-[0.98] sm:w-auto cursor-pointer"
+              className="inline-flex w-full items-center justify-center gap-2.5 rounded-full border border-white/8 bg-[#0e0e11]/90 px-4 py-3.5 font-mono text-[13px] text-zinc-300 shadow-inner transition duration-200 hover:border-emerald-500/35 hover:text-white active:scale-[0.98] sm:w-auto cursor-pointer"
               aria-label="复制全局安装命令 npm install -g portless"
             >
               <span className="text-zinc-500 select-none">$</span>
@@ -169,10 +169,10 @@ export function Hero() {
         <div className="mx-auto mt-12 grid max-w-5xl items-stretch gap-5 lg:grid-cols-12">
           {/* Left Pane: package.json diff + URL upgrade */}
           <div className="relative flex min-w-0 flex-col lg:col-span-6">
-            <div className="pointer-events-none absolute -inset-3 rounded-[22px] bg-gradient-to-r from-emerald-500/15 via-transparent to-violet-500/15 opacity-60 blur-2xl" />
-            <div className="relative flex h-full flex-col overflow-hidden rounded-[16px] border border-white/10 bg-[#0e0e10] shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+            <div className="pointer-events-none absolute -inset-3 rounded-[22px] bg-linear-to-r from-emerald-500/15 via-transparent to-violet-500/15 opacity-60 blur-2xl" />
+            <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-white/10 bg-code-bg shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
               {/* Window Top Bar */}
-              <div className="flex h-10 items-center justify-between border-b border-white/[0.06] bg-white/[0.025] px-4">
+              <div className="flex h-10 items-center justify-between border-b border-white/6 bg-white/2.5 px-4">
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1.5">
                     <span className="size-2.5 rounded-full bg-[#ff5f56]/90 border border-black/15" />
@@ -186,7 +186,7 @@ export function Hero() {
                 <button
                   type="button"
                   onClick={handleCopyDiff}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-zinc-400 transition hover:border-white/20 hover:bg-white/[0.08] hover:text-white cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/4 px-2.5 py-1 text-[11px] font-medium text-zinc-400 transition hover:border-white/20 hover:bg-white/8 hover:text-white cursor-pointer"
                   aria-label="复制 dev 脚本配置"
                 >
                   {diffCopied ? (
@@ -212,7 +212,7 @@ export function Hero() {
               <div className="flex flex-1 flex-col justify-between p-4">
                 <div className="overflow-x-auto font-mono text-[12px] leading-6 sm:text-[12.5px]">
                   <div className="px-2 text-zinc-600 select-none">{"\"scripts\": {"}</div>
-                  <div className="flex items-center justify-between gap-2 rounded-md border-l-2 border-rose-400/70 bg-rose-500/[0.06] px-2.5 py-1">
+                  <div className="flex items-center justify-between gap-2 rounded-md border-l-2 border-rose-400/70 bg-rose-500/6 px-2.5 py-1">
                     <div className="whitespace-pre">
                       <span className="font-semibold text-rose-400 select-none">- </span>
                       <span className="text-rose-200/75">{heroDiff.before}</span>
@@ -221,7 +221,7 @@ export function Hero() {
                       # {heroDiff.beforeUrl}
                     </span>
                   </div>
-                  <div className="mt-1 flex items-center justify-between gap-2 rounded-md border-l-2 border-emerald-400/80 bg-emerald-500/[0.08] px-2.5 py-1">
+                  <div className="mt-1 flex items-center justify-between gap-2 rounded-md border-l-2 border-emerald-400/80 bg-emerald-500/8 px-2.5 py-1">
                     <div className="whitespace-pre">
                       <span className="font-semibold text-emerald-400 select-none">+ </span>
                       <span className="font-medium text-zinc-200">"dev"</span>
@@ -236,7 +236,7 @@ export function Hero() {
                 </div>
 
                 {/* Address Bar Comparison Strip */}
-                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-[11.5px]">
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/6 bg-white/2 px-3 py-2 text-[11.5px]">
                   <div className="flex items-center gap-2 font-mono text-zinc-500">
                     <span className="inline-flex items-center gap-1 rounded-md border border-rose-500/20 bg-rose-500/10 px-1.5 py-0.5 text-[10px] text-rose-300">
                       before
@@ -259,7 +259,7 @@ export function Hero() {
               </div>
 
               {/* Card Footer */}
-              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.06] bg-white/[0.02] px-4 py-2 text-[11px] text-zinc-500">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/6 bg-white/2 px-4 py-2 text-[11px] text-zinc-500">
                 <span>一行替换，告别端口冲突与记忆负担</span>
                 <span className="font-mono text-zinc-400">或直接运行裸 portless</span>
               </div>
@@ -268,9 +268,9 @@ export function Hero() {
 
           {/* Right Pane: Live Terminal */}
           <div className="flex min-w-0 flex-col lg:col-span-6">
-            <div className="relative flex h-full flex-col overflow-hidden rounded-[16px] border border-white/10 bg-[#0e0e10] shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+            <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-white/10 bg-code-bg shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
               {/* Window Top Bar */}
-              <div className="flex h-10 items-center gap-2 border-b border-white/[0.06] bg-white/[0.025] px-4">
+              <div className="flex h-10 items-center gap-2 border-b border-white/6 bg-white/2.5 px-4">
                 <div className="flex gap-1.5">
                   <span className="size-2.5 rounded-full bg-[#ff5f56]/90 border border-black/15" />
                   <span className="size-2.5 rounded-full bg-[#ffbd2e]/90 border border-black/15" />
@@ -284,7 +284,7 @@ export function Hero() {
                     <button
                       type="button"
                       onClick={typing.replay}
-                      className="rounded-md border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] font-medium text-zinc-400 transition hover:border-white/20 hover:text-white cursor-pointer"
+                      className="rounded-md border border-white/10 bg-white/4 px-2 py-0.5 text-[10px] font-medium text-zinc-400 transition hover:border-white/20 hover:text-white cursor-pointer"
                       aria-label="重播终端输出动画"
                     >
                       重播
@@ -298,7 +298,7 @@ export function Hero() {
               </div>
 
               {/* Terminal Output Body */}
-              <pre className="flex-1 overflow-x-auto p-4 font-mono text-[12px] leading-7 whitespace-pre-wrap sm:text-[12.5px] sm:whitespace-pre min-h-[164px]">
+              <pre className="flex-1 overflow-x-auto p-4 font-mono text-[12px] leading-7 whitespace-pre-wrap sm:text-[12.5px] sm:whitespace-pre min-h-41">
                 <code>
                   {lines.map((line, i) => {
                     const isReady = line.startsWith("→");
@@ -328,7 +328,7 @@ export function Hero() {
               </pre>
 
               {/* Card Footer */}
-              <div className="flex items-center justify-between border-t border-white/[0.06] bg-white/[0.02] px-4 py-2 text-[11px] text-zinc-500">
+              <div className="flex items-center justify-between border-t border-white/6 bg-white/2 px-4 py-2 text-[11px] text-zinc-500">
                 <span>自动生成本地 CA · 自动绑定 443</span>
                 <span className="font-mono text-emerald-400/90 tabular-nums">PORT=4123</span>
               </div>

@@ -23,7 +23,7 @@ export function DocsMobileNav({ open, onClose }: { open: boolean; onClose: () =>
   return (
     <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true" aria-label="文档目录">
       <button className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} aria-label="关闭目录" />
-      <div className="relative h-full w-[280px] overflow-y-auto border-r border-white/10 bg-[#0b0b0d] px-4 py-5 shadow-[0_0_60px_rgba(0,0,0,0.6)] animate-slide-in">
+      <div className="relative h-full w-70 overflow-y-auto border-r border-white/10 bg-[#0b0b0d] px-4 py-5 shadow-[0_0_60px_rgba(0,0,0,0.6)] animate-slide-in">
         <div className="mb-6 flex items-center justify-between">
           <span className="text-[13px] font-semibold text-white">文档目录</span>
           <button onClick={onClose} className="rounded-full border border-white/10 bg-white/5 p-1.5 text-white/70 hover:text-white" aria-label="关闭">

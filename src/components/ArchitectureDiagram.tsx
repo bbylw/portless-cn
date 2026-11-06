@@ -24,13 +24,13 @@ const routes = [
 
 export function ArchitectureDiagram() {
   return (
-    <div className="@container relative overflow-hidden rounded-[20px] border border-white/[0.08] bg-gradient-to-b from-white/[0.045] to-white/[0.015] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.4),0_16px_40px_-8px_rgba(0,0,0,0.45)] backdrop-blur sm:p-6">
+    <div className="@container relative overflow-hidden rounded-2xl border border-white/8 bg-linear-to-b from-white/4.5 to-white/1.5 p-5 shadow-[0_1px_2px_rgba(0,0,0,0.4),0_16px_40px_-8px_rgba(0,0,0,0.45)] backdrop-blur sm:p-6">
       <div className="pointer-events-none absolute inset-0 grid-bg opacity-[0.22] [mask-image:radial-gradient(ellipse_at_center,black_35%,transparent_85%)]" />
-      <div className="pointer-events-none absolute -top-24 left-1/2 h-44 w-[560px] -translate-x-1/2 rounded-full bg-emerald-500/[0.09] blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 right-1/4 h-40 w-[420px] rounded-full bg-violet-500/[0.08] blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 left-1/2 h-44 w-140 -translate-x-1/2 rounded-full bg-emerald-500/9 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 right-1/4 h-40 w-105 rounded-full bg-violet-500/8 blur-3xl" />
 
       {/* Header */}
-      <div className="relative flex flex-wrap items-center justify-between gap-2 border-b border-white/[0.06] pb-4">
+      <div className="relative flex flex-wrap items-center justify-between gap-2 border-b border-white/6 pb-4">
         <div className="flex items-center gap-2.5">
           <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold tracking-wider uppercase text-emerald-300">
             <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
@@ -48,7 +48,7 @@ export function ArchitectureDiagram() {
       {/* Main 3-stage pipeline */}
       <div className="relative mt-5 grid items-center gap-2 @2xl:grid-cols-[minmax(0,1.35fr)_20px_126px_20px_minmax(0,0.88fr)] @4xl:gap-3 @4xl:grid-cols-[minmax(0,1fr)_56px_172px_56px_minmax(0,1fr)]">
         {/* Stage 1: Browser / Agent requests */}
-        <div className="min-w-0 rounded-2xl border border-white/[0.07] bg-[#0c0c0e]/90 p-2.5 @4xl:p-3.5 shadow-inner">
+        <div className="min-w-0 rounded-2xl border border-white/7 bg-[#0c0c0e]/90 p-2.5 @4xl:p-3.5 shadow-inner">
           <div className="mb-2.5 flex items-center justify-between px-1">
             <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-400">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-zinc-400">
@@ -63,7 +63,7 @@ export function ArchitectureDiagram() {
             {routes.map((r) => (
               <div
                 key={r.host}
-                className="flex items-center justify-between gap-1.5 rounded-xl border border-white/[0.06] bg-white/[0.03] px-2 py-2 transition hover:border-white/[0.12] hover:bg-white/[0.05] @4xl:gap-2 @4xl:px-2.5"
+                className="flex items-center justify-between gap-1.5 rounded-xl border border-white/6 bg-white/3 px-2 py-2 transition hover:border-white/12 hover:bg-white/5 @4xl:gap-2 @4xl:px-2.5"
               >
                 <div className="flex min-w-0 items-center gap-1.5 @4xl:gap-2">
                   <svg
@@ -99,9 +99,9 @@ export function ArchitectureDiagram() {
         {/* Connector 1: Client -> Proxy */}
         <div className="flex items-center justify-center py-0.5 @2xl:py-0">
           <div className="relative hidden h-5 w-full items-center @2xl:flex">
-            <div className="h-px w-full bg-gradient-to-r from-white/10 via-emerald-500/45 to-emerald-400/70" />
-            <div className="pointer-events-none absolute inset-x-0 h-[2px] overflow-hidden">
-              <div className="h-full w-1/2 bg-gradient-to-r from-transparent via-emerald-300 to-transparent animate-flow-emerald" />
+            <div className="h-px w-full bg-linear-to-r from-white/10 via-emerald-500/45 to-emerald-400/70" />
+            <div className="pointer-events-none absolute inset-x-0 h-0.5 overflow-hidden">
+              <div className="h-full w-1/2 bg-linear-to-r from-transparent via-emerald-300 to-transparent animate-flow-emerald" />
             </div>
             <div className="absolute left-1/2 -translate-x-1/2 size-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(34,197,94,0.9)]" />
           </div>
@@ -111,8 +111,8 @@ export function ArchitectureDiagram() {
         </div>
 
         {/* Stage 2: Portless Proxy Hub */}
-        <div className="relative flex flex-col items-center justify-center rounded-2xl border border-emerald-500/25 bg-gradient-to-b from-emerald-500/[0.12] to-[#0e0e11] px-2.5 py-4 text-center shadow-[0_8px_30px_-4px_rgba(34,197,94,0.18)]">
-          <div className="relative flex size-13 @4xl:size-14 items-center justify-center rounded-2xl border border-white/20 bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-[0_6px_20px_rgba(34,197,94,0.4)]">
+        <div className="relative flex flex-col items-center justify-center rounded-2xl border border-emerald-500/25 bg-linear-to-b from-emerald-500/12 to-[#0e0e11] px-2.5 py-4 text-center shadow-[0_8px_30px_-4px_rgba(34,197,94,0.18)]">
+          <div className="relative flex size-13 @4xl:size-14 items-center justify-center rounded-2xl border border-white/20 bg-linear-to-br from-emerald-500 to-emerald-600 shadow-[0_6px_20px_rgba(34,197,94,0.4)]">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path
                 d="M12 3l7 3.5v4.7c0 3.6-2.1 5.9-7 7.8-4.9-1.9-7-4.2-7-7.8V6.5L12 3z"
@@ -123,13 +123,13 @@ export function ArchitectureDiagram() {
               />
               <path d="M9.2 12.2l1.8 1.8 3.8-3.8" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span className="absolute -bottom-2 rounded-full border border-emerald-400/30 bg-[#09090b] px-2 py-0.5 font-mono text-[10px] font-semibold text-emerald-300 shadow">
+            <span className="absolute -bottom-2 rounded-full border border-emerald-400/30 bg-bg px-2 py-0.5 font-mono text-[10px] font-semibold text-emerald-300 shadow">
               :443
             </span>
           </div>
           <div className="mt-3.5 font-mono text-[11.5px] @4xl:text-[12px] font-semibold text-white">portless proxy</div>
           <div className="mt-0.5 text-[10.5px] @4xl:text-[11px] text-emerald-300/80">HTTPS · HTTP/2</div>
-          <div className="mt-2 rounded-lg border border-white/[0.06] bg-black/40 px-2 py-1 font-mono text-[10px] text-zinc-400">
+          <div className="mt-2 rounded-lg border border-white/6 bg-black/40 px-2 py-1 font-mono text-[10px] text-zinc-400">
             Host 匹配路由表
           </div>
         </div>
@@ -137,9 +137,9 @@ export function ArchitectureDiagram() {
         {/* Connector 2: Proxy -> Local servers */}
         <div className="flex items-center justify-center py-0.5 @2xl:py-0">
           <div className="relative hidden h-5 w-full items-center @2xl:flex">
-            <div className="h-px w-full bg-gradient-to-r from-violet-400/70 via-violet-500/45 to-white/10" />
-            <div className="pointer-events-none absolute inset-x-0 h-[2px] overflow-hidden">
-              <div className="h-full w-1/2 bg-gradient-to-r from-transparent via-violet-300 to-transparent animate-flow-violet" />
+            <div className="h-px w-full bg-linear-to-r from-violet-400/70 via-violet-500/45 to-white/10" />
+            <div className="pointer-events-none absolute inset-x-0 h-0.5 overflow-hidden">
+              <div className="h-full w-1/2 bg-linear-to-r from-transparent via-violet-300 to-transparent animate-flow-violet" />
             </div>
             <div className="absolute left-1/2 -translate-x-1/2 size-2 rounded-full bg-violet-400 shadow-[0_0_10px_rgba(139,92,246,0.9)]" />
           </div>
@@ -149,7 +149,7 @@ export function ArchitectureDiagram() {
         </div>
 
         {/* Stage 3: Local App Processes */}
-        <div className="min-w-0 rounded-2xl border border-white/[0.07] bg-[#0c0c0e]/90 p-3 @4xl:p-3.5 shadow-inner">
+        <div className="min-w-0 rounded-2xl border border-white/7 bg-[#0c0c0e]/90 p-3 @4xl:p-3.5 shadow-inner">
           <div className="mb-2.5 flex items-center justify-between px-1">
             <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-400">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-zinc-400">
@@ -164,9 +164,9 @@ export function ArchitectureDiagram() {
             {routes.map((r) => (
               <div
                 key={r.port}
-                className="flex items-center justify-between gap-2 rounded-xl border border-white/[0.06] bg-white/[0.03] px-2.5 py-2 transition hover:border-white/[0.12] hover:bg-white/[0.05]"
+                className="flex items-center justify-between gap-2 rounded-xl border border-white/6 bg-white/3 px-2.5 py-2 transition hover:border-white/12 hover:bg-white/5"
               >
-                <span className="inline-flex shrink-0 items-center rounded-md border border-white/10 bg-white/[0.06] px-1.5 py-0.5 font-mono text-[11px] font-semibold text-white tabular-nums">
+                <span className="inline-flex shrink-0 items-center rounded-md border border-white/10 bg-white/6 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-white tabular-nums">
                   <span className="hidden @4xl:inline">127.0.0.1</span>
                   {r.port}
                 </span>
@@ -179,19 +179,19 @@ export function ArchitectureDiagram() {
 
       {/* Footer capabilities */}
       <div className="relative mt-4 flex flex-wrap items-center justify-center gap-2 pt-1 text-[11px]">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-zinc-400">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/8 bg-white/3 px-3 py-1 text-zinc-400">
           <span className="size-1.5 rounded-full bg-zinc-400" />
           127.0.0.1 + ::1 仅回环绑定
         </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/[0.08] px-3 py-1 text-emerald-300">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/8 px-3 py-1 text-emerald-300">
           <span className="size-1.5 rounded-full bg-emerald-400" />
           自动复用上次代理配置
         </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/[0.08] px-3 py-1 text-violet-300">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/8 px-3 py-1 text-violet-300">
           <span className="size-1.5 rounded-full bg-violet-400" />
           WebSocket · HMR 透传
         </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-zinc-400">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/8 bg-white/3 px-3 py-1 text-zinc-400">
           进程停止自动移除路由
         </span>
       </div>

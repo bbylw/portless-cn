@@ -13,7 +13,7 @@ export function DocsPageHeader({ page }: { page: DocsPageMeta }) {
         <span className="text-white/50">{page.label}</span>
       </div>
       <h1 className="mt-3 text-[30px] font-bold tracking-tight text-white sm:text-[34px]">{page.title}</h1>
-      <p className="mt-3 max-w-[640px] text-[14.5px] leading-7 text-zinc-400">{page.description}</p>
+      <p className="mt-3 max-w-160 text-[14.5px] leading-7 text-zinc-400">{page.description}</p>
     </header>
   );
 }

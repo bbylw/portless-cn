@@ -30,15 +30,15 @@ export function DocsLayout() {
   const { previous, next } = getAdjacentDocsPages(page.path);
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+    <div className="min-h-screen bg-bg text-text">
       <DocsHeader onOpenNav={() => setNavOpen(true)} />
       <DocsMobileNav open={navOpen} onClose={() => setNavOpen(false)} />
 
-      <div className="mx-auto flex max-w-[1440px] items-start px-4 sm:px-6 lg:px-8">
-        <DocsSidebar className="sticky top-16 hidden h-[calc(100vh-4rem)] w-[240px] shrink-0 overflow-y-auto border-r border-white/[0.07] py-10 pr-4 lg:block" />
+      <div className="mx-auto flex max-w-360 items-start px-4 sm:px-6 lg:px-8">
+        <DocsSidebar className="sticky top-16 hidden h-[calc(100vh-4rem)] w-60 shrink-0 overflow-y-auto border-r border-white/7 py-10 pr-4 lg:block" />
 
         <main className="min-w-0 flex-1 py-10 lg:px-10">
-          <article className="mx-auto w-full max-w-[780px]">
+          <article className="mx-auto w-full max-w-195">
             <DocsPageHeader page={page} />
             <Outlet />
             <DocsPager previous={previous} next={next} />

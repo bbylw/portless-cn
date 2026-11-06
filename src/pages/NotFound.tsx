@@ -8,7 +8,7 @@ export function NotFound() {
   return (
     <section className="relative flex min-h-[70vh] items-center overflow-hidden py-24">
       <div className="absolute inset-0 grid-bg grid-bg-fade opacity-40" />
-      <div className="absolute -top-20 left-1/2 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.12),_transparent_65%)] blur-2xl" />
+      <div className="absolute -top-20 left-1/2 h-125 w-225 -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(139,92,246,0.12),_transparent_65%)] blur-2xl" />
       <div className="relative mx-auto max-w-2xl px-4 text-center">
         <div className="font-mono text-[64px] font-bold leading-none text-white/10 sm:text-[88px]">404</div>
         <h1 className="mt-4 text-[26px] font-bold tracking-tight text-white sm:text-[32px]">这个页面不存在</h1>
@@ -24,7 +24,7 @@ export function NotFound() {
           </Link>
           <Link
             to="/docs"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-6 py-3 text-[14px] font-medium text-white transition hover:border-white/20 hover:bg-white/10 sm:w-auto"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/6 px-6 py-3 text-[14px] font-medium text-white transition hover:border-white/20 hover:bg-white/10 sm:w-auto"
           >
             进入文档
           </Link>

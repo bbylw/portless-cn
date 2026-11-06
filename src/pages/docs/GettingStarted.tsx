@@ -10,7 +10,7 @@ export function GettingStarted() {
         <DocP>全局安装可获得一致体验，也可以按项目安装并在团队内锁定版本。</DocP>
         <div className="grid gap-3 sm:grid-cols-2">
           {installCommands.map((item, index) => (
-            <div key={item.cmd} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <div key={item.cmd} className="rounded-xl border border-white/10 bg-white/3 p-4">
               <div className="flex items-center justify-between gap-3">
                 <span className="text-[13px] font-medium text-white">{item.label}</span>
                 <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${index === 0 ? "bg-emerald-500 text-black" : "bg-white/10 text-zinc-400"}`}>

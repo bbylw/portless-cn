@@ -3,10 +3,10 @@ import type { DocsPageMeta } from "../../navigation/docsNav";
 
 export function OnThisPage({ page }: { page: DocsPageMeta }) {
   return (
-    <aside className="hidden w-[200px] shrink-0 py-10 pl-8 xl:block" aria-label="本页内容">
+    <aside className="hidden w-50 shrink-0 py-10 pl-8 xl:block" aria-label="本页内容">
       <div className="sticky top-24">
         <h2 className="text-[10.5px] font-semibold tracking-widest uppercase text-white/30">本页内容</h2>
-        <nav className="mt-3 space-y-1.5 border-l border-white/[0.07] pl-3">
+        <nav className="mt-3 space-y-1.5 border-l border-white/7 pl-3">
           {page.sections.map((section) => (
             <Link
               key={section.id}

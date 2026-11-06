@@ -4,7 +4,7 @@ import { LogoSvg } from "./LogoSvg";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `relative rounded-full px-3.5 py-2 text-[13.5px] font-medium transition ${
-    isActive ? "text-white bg-white/[0.08] border border-white/[0.06]" : "text-[var(--color-text-muted)] hover:text-white hover:bg-white/[0.06]"
+    isActive ? "text-white bg-white/8 border border-white/6" : "text-text-muted hover:text-white hover:bg-white/6"
   }`;
 
 const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -59,18 +59,18 @@ export function Navbar() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "border-b border-white/[0.07] bg-[rgba(9,9,11,0.78)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(9,9,11,0.65)] shadow-[0_1px_0_0_rgba(255,255,255,0.03),0_8px_32px_rgba(0,0,0,0.4)]"
+          ? "border-b border-white/7 bg-[rgba(9,9,11,0.78)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(9,9,11,0.65)] shadow-[0_1px_0_0_rgba(255,255,255,0.03),0_8px_32px_rgba(0,0,0,0.4)]"
           : "border-b border-transparent bg-transparent"
       }`}
     >
-      <div className="mx-auto flex h-[64px] max-w-[1280px] items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/" className="group flex items-center gap-3">
           <div className="rounded-[10px] shadow-[0_2px_12px_rgba(34,197,94,0.2)] transition duration-300 group-hover:scale-[1.03] group-hover:shadow-[0_4px_18px_rgba(34,197,94,0.32)]">
             <LogoSvg />
           </div>
           <div className="flex flex-col leading-none">
             <span className="text-[17px] font-semibold tracking-tight text-white">portless</span>
-            <span className="mt-0.5 text-[10px] font-medium tracking-widest uppercase text-[var(--color-text-faint)]">Localhost · Named</span>
+            <span className="mt-0.5 text-[10px] font-medium tracking-widest uppercase text-text-faint">Localhost · Named</span>
           </div>
         </Link>
 
@@ -79,8 +79,8 @@ export function Navbar() {
             to="/#features"
             className={`relative rounded-full px-3.5 py-2 text-[13.5px] font-medium transition ${
               isLanding && activeSection === "features"
-                ? "border border-white/[0.06] bg-white/[0.08] text-white"
-                : "text-[var(--color-text-muted)] hover:bg-white/[0.06] hover:text-white"
+                ? "border border-white/6 bg-white/8 text-white"
+                : "text-text-muted hover:bg-white/6 hover:text-white"
             }`}
           >
             功能
@@ -89,8 +89,8 @@ export function Navbar() {
             to="/#install"
             className={`relative rounded-full px-3.5 py-2 text-[13.5px] font-medium transition ${
               isLanding && activeSection === "install"
-                ? "border border-white/[0.06] bg-white/[0.08] text-white"
-                : "text-[var(--color-text-muted)] hover:bg-white/[0.06] hover:text-white"
+                ? "border border-white/6 bg-white/8 text-white"
+                : "text-text-muted hover:bg-white/6 hover:text-white"
             }`}
           >
             快速开始
@@ -103,7 +103,7 @@ export function Navbar() {
             href="https://github.com/vercel-labs/portless"
             target="_blank"
             rel="noopener noreferrer"
-            className="ml-2 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-[13px] font-medium text-white/80 transition hover:border-white/15 hover:bg-white/10 hover:text-white"
+            className="ml-2 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/6 px-3 py-2 text-[13px] font-medium text-white/80 transition hover:border-white/15 hover:bg-white/10 hover:text-white"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="opacity-80">
               <path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.53 2.87 8.37 6.84 9.74.5.09.68-.22.68-.48v-1.7c-2.78.62-3.37-1.2-3.37-1.2-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.27 2.75 1.05.8-.23 1.65-.34 2.5-.34.85 0 1.7.11 2.5.34 1.91-1.32 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .26.18.58.69.48A10.03 10.03 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z" />

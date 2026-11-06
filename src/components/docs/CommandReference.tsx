@@ -42,7 +42,7 @@ export function CommandReference() {
           onChange={(event) => setQuery(event.target.value)}
           placeholder="搜索命令、选项、环境变量…"
           aria-label="搜索命令、选项、环境变量"
-          className="w-full rounded-full border border-white/10 bg-white/[0.04] py-2.5 pl-9 pr-10 text-sm text-white placeholder:text-zinc-500 transition focus:border-white/20 focus:bg-white/[0.06] focus:outline-none"
+          className="w-full rounded-full border border-white/10 bg-white/4 py-2.5 pl-9 pr-10 text-sm text-white placeholder:text-zinc-500 transition focus:border-white/20 focus:bg-white/6 focus:outline-none"
         />
         {query && (
           <button
@@ -61,11 +61,11 @@ export function CommandReference() {
         {filteredCommands.length === 0 ? (
           <DocP>没有匹配的命令。</DocP>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
+          <div className="overflow-hidden rounded-xl border border-white/10 bg-white/2">
             {filteredCommands.map((item, index) => (
               <div
                 key={`${item.cmd}-${index}`}
-                className="group flex flex-col gap-1.5 border-b border-white/[0.06] px-4 py-3.5 last:border-0 transition hover:bg-white/[0.03] sm:flex-row sm:items-center sm:gap-4"
+                className="group flex flex-col gap-1.5 border-b border-white/6 px-4 py-3.5 last:border-0 transition hover:bg-white/3 sm:flex-row sm:items-center sm:gap-4"
               >
                 <code className="shrink-0 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 font-mono text-[12.5px] font-medium text-emerald-300">
                   {item.cmd}
