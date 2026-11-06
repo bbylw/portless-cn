@@ -1,3 +1,5 @@
+import { LogoSvg } from "./LogoSvg";
+
 const routes = [
   {
     host: "myapp.localhost",
@@ -40,15 +42,15 @@ export function ArchitectureDiagram() {
             单一代理监听 443，按 Host 头把具名域名转发至本机临时端口
           </span>
         </div>
-        <span className="hidden font-mono text-[11px] text-zinc-500 @xl:inline">
+        <span className="hidden rounded-md border border-white/6 bg-white/3 px-2 py-0.5 font-mono text-[10.5px] text-zinc-400 @xl:inline">
           ~/.portless/routes.json
         </span>
       </div>
 
-      {/* Main 3-stage pipeline */}
-      <div className="relative mt-5 grid items-center gap-2 @2xl:grid-cols-[minmax(0,1.35fr)_20px_126px_20px_minmax(0,0.88fr)] @4xl:gap-3 @4xl:grid-cols-[minmax(0,1fr)_56px_172px_56px_minmax(0,1fr)]">
+      {/* Main 3-stage pipeline (Equal-Height Columns) */}
+      <div className="relative mt-5 grid items-stretch gap-2 @2xl:grid-cols-[minmax(0,1.35fr)_20px_132px_20px_minmax(0,0.92fr)] @4xl:gap-3 @4xl:grid-cols-[minmax(0,1fr)_52px_176px_52px_minmax(0,1fr)]">
         {/* Stage 1: Browser / Agent requests */}
-        <div className="min-w-0 rounded-2xl border border-white/7 bg-[#0c0c0e]/90 p-2.5 @4xl:p-3.5 shadow-inner">
+        <div className="flex min-w-0 flex-col justify-between rounded-2xl border border-white/7 bg-[#0c0c0e]/90 p-2.5 @4xl:p-3.5 shadow-inner">
           <div className="mb-2.5 flex items-center justify-between px-1">
             <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-400">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-zinc-400">
@@ -111,25 +113,27 @@ export function ArchitectureDiagram() {
         </div>
 
         {/* Stage 2: Portless Proxy Hub */}
-        <div className="relative flex flex-col items-center justify-center rounded-2xl border border-emerald-500/25 bg-linear-to-b from-emerald-500/12 to-[#0e0e11] px-2.5 py-4 text-center shadow-[0_8px_30px_-4px_rgba(34,197,94,0.18)]">
-          <div className="relative flex size-13 @4xl:size-14 items-center justify-center rounded-2xl border border-white/20 bg-linear-to-br from-emerald-500 to-emerald-600 shadow-[0_6px_20px_rgba(34,197,94,0.4)]">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M12 3l7 3.5v4.7c0 3.6-2.1 5.9-7 7.8-4.9-1.9-7-4.2-7-7.8V6.5L12 3z"
-                fill="white"
-                fillOpacity="0.16"
-                stroke="white"
-                strokeWidth="1.75"
-              />
-              <path d="M9.2 12.2l1.8 1.8 3.8-3.8" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span className="absolute -bottom-2 rounded-full border border-emerald-400/30 bg-bg px-2 py-0.5 font-mono text-[10px] font-semibold text-emerald-300 shadow">
-              :443
+        <div className="relative flex flex-col items-center justify-between rounded-2xl border border-emerald-500/25 bg-linear-to-b from-emerald-500/12 via-[#0e1512] to-[#0c0c0f] px-2.5 py-3.5 text-center shadow-[0_8px_30px_-4px_rgba(34,197,94,0.18)]">
+          <div className="w-full flex items-center justify-center">
+            <span className="font-mono text-[9.5px] tracking-widest uppercase text-emerald-300/70">
+              REVERSE PROXY
             </span>
           </div>
-          <div className="mt-3.5 font-mono text-[11.5px] @4xl:text-[12px] font-semibold text-white">portless proxy</div>
-          <div className="mt-0.5 text-[10.5px] @4xl:text-[11px] text-emerald-300/80">HTTPS · HTTP/2</div>
-          <div className="mt-2 rounded-lg border border-white/6 bg-black/40 px-2 py-1 font-mono text-[10px] text-zinc-400">
+          <div className="my-1.5 flex flex-col items-center">
+            <div className="relative flex items-center justify-center rounded-2xl p-1 ring-1 ring-emerald-400/25 bg-emerald-500/10 shadow-[0_0_24px_rgba(34,197,94,0.28)]">
+              <LogoSvg size={42} />
+              <span className="absolute -bottom-2 rounded-full border border-emerald-400/35 bg-bg px-2 py-0.5 font-mono text-[9.5px] font-semibold text-emerald-300 shadow">
+                :443
+              </span>
+            </div>
+            <div className="mt-3 font-mono text-[11.5px] @4xl:text-[12px] font-semibold text-white">
+              portless proxy
+            </div>
+            <div className="mt-0.5 text-[10px] @4xl:text-[10.5px] text-emerald-300/80">
+              HTTPS · HTTP/2
+            </div>
+          </div>
+          <div className="w-full rounded-lg border border-white/6 bg-black/45 px-2 py-1 font-mono text-[10px] text-zinc-400">
             Host 匹配路由表
           </div>
         </div>
@@ -149,7 +153,7 @@ export function ArchitectureDiagram() {
         </div>
 
         {/* Stage 3: Local App Processes */}
-        <div className="min-w-0 rounded-2xl border border-white/7 bg-[#0c0c0e]/90 p-3 @4xl:p-3.5 shadow-inner">
+        <div className="flex min-w-0 flex-col justify-between rounded-2xl border border-white/7 bg-[#0c0c0e]/90 p-2.5 @4xl:p-3.5 shadow-inner">
           <div className="mb-2.5 flex items-center justify-between px-1">
             <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-400">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-zinc-400">
@@ -164,11 +168,24 @@ export function ArchitectureDiagram() {
             {routes.map((r) => (
               <div
                 key={r.port}
-                className="flex items-center justify-between gap-2 rounded-xl border border-white/6 bg-white/3 px-2.5 py-2 transition hover:border-white/12 hover:bg-white/5"
+                className="flex items-center justify-between gap-2 rounded-xl border border-white/6 bg-white/3 px-2 py-2 transition hover:border-white/12 hover:bg-white/5 @4xl:px-2.5"
               >
-                <span className="inline-flex shrink-0 items-center rounded-md border border-white/10 bg-white/6 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-white tabular-nums">
-                  <span className="hidden @4xl:inline">127.0.0.1</span>
-                  {r.port}
+                <span
+                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-md border px-1.5 py-0.5 font-mono text-[11px] font-semibold tabular-nums ${
+                    r.tone === "emerald"
+                      ? "border-emerald-500/20 bg-emerald-500/8 text-emerald-200"
+                      : "border-violet-500/20 bg-violet-500/8 text-violet-200"
+                  }`}
+                >
+                  <span
+                    className={`size-1.5 rounded-full ${
+                      r.tone === "emerald" ? "bg-emerald-400" : "bg-violet-400"
+                    }`}
+                  />
+                  <span>
+                    <span className="hidden @4xl:inline text-zinc-400 font-normal">127.0.0.1</span>
+                    {r.port}
+                  </span>
                 </span>
                 <span className="truncate font-mono text-[11px] text-zinc-400">{r.cmd}</span>
               </div>

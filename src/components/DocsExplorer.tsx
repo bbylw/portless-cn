@@ -17,12 +17,11 @@ export function DocsExplorer() {
         </div>
 
         <div className="mt-10 grid gap-4 lg:grid-cols-12">
-          {docsGroups.map((group) => {
+          {docsGroups.map((group, gIdx) => {
             const isCore = group.id === "core";
             const isRef = group.id === "reference";
-            const isOps = group.id === "ops";
-            const colSpan =
-              isCore || isRef ? "lg:col-span-7" : "lg:col-span-5";
+            const colSpan = isCore || isRef ? "lg:col-span-7" : "lg:col-span-5";
+            const isEmerald = gIdx % 2 === 0;
 
             return (
               <div
@@ -32,7 +31,14 @@ export function DocsExplorer() {
                 <div className="pointer-events-none absolute -top-10 -right-10 size-36 rounded-full bg-linear-to-br from-emerald-500/10 to-violet-500/10 opacity-0 blur-2xl transition duration-500 group-hover:opacity-100" />
                 <div className="relative flex flex-1 flex-col">
                   <div className="flex items-center justify-between gap-2 border-b border-white/6 pb-3">
-                    <h3 className="text-[13.5px] font-semibold tracking-wide text-white">{group.label}</h3>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`size-1.5 rounded-full ${
+                          isEmerald ? "bg-emerald-400" : "bg-violet-400"
+                        }`}
+                      />
+                      <h3 className="text-[13.5px] font-semibold tracking-wide text-white">{group.label}</h3>
+                    </div>
                     <span className="rounded-full border border-white/8 bg-white/3 px-2 py-0.5 font-mono text-[10.5px] text-zinc-400 tabular-nums">
                       {group.pages.length} 篇
                     </span>
@@ -44,12 +50,11 @@ export function DocsExplorer() {
                     }`}
                   >
                     {group.pages.map((page) => (
-                      <Link
+                      <div
                         key={page.path}
-                        to={page.path}
                         className="group/item flex flex-col justify-between rounded-xl border border-white/6 bg-[#111114]/90 p-3.5 transition duration-200 hover:border-emerald-500/30 hover:bg-white/4"
                       >
-                        <div>
+                        <Link to={page.path} className="block">
                           <div className="flex items-center justify-between gap-2">
                             <span className="text-[13.5px] font-semibold text-zinc-100 transition group-hover/item:text-emerald-300">
                               {page.label}
@@ -61,20 +66,21 @@ export function DocsExplorer() {
                           <p className="mt-1.5 text-[12px] leading-relaxed text-zinc-400 text-pretty">
                             {page.description}
                           </p>
-                        </div>
-                        {(isOps || isRef) && page.sections.length > 0 && (
+                        </Link>
+                        {page.sections.length > 0 && (
                           <div className="mt-3 flex flex-wrap gap-1.5 border-t border-white/5 pt-2.5">
                             {page.sections.map((sec) => (
-                              <span
+                              <Link
                                 key={sec.id}
-                                className="rounded-md border border-white/6 bg-white/3 px-2 py-0.5 text-[10.5px] text-zinc-400"
+                                to={`${page.path}#${sec.id}`}
+                                className="rounded-md border border-white/6 bg-white/3 px-2 py-0.5 text-[10.5px] text-zinc-400 transition hover:border-emerald-500/35 hover:bg-emerald-500/10 hover:text-emerald-300"
                               >
                                 {sec.title}
-                              </span>
+                              </Link>
                             ))}
                           </div>
                         )}
-                      </Link>
+                      </div>
                     ))}
                   </div>
                 </div>

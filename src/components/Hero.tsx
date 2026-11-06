@@ -40,6 +40,87 @@ function useTyping(text: string, speed = 28, startDelay = 600) {
   return { out, done, replay: () => setRunId((n) => n + 1) };
 }
 
+function renderTerminalLine(line: string) {
+  if (line.startsWith("$ ")) {
+    const rest = line.slice(2);
+    const parts = rest.split(" ");
+    return (
+      <>
+        <span className="text-zinc-500 select-none">$ </span>
+        <span className="font-semibold text-emerald-300">{parts[0] ?? ""}</span>
+        {parts[1] ? <span className="text-violet-300"> {parts[1]}</span> : null}
+        {parts.length > 2 ? <span className="text-zinc-100"> {parts.slice(2).join(" ")}</span> : null}
+      </>
+    );
+  }
+
+  if (line.startsWith("✓ ")) {
+    const urlIdx = line.indexOf("https://");
+    const portIdx = line.indexOf(":4123");
+    if (urlIdx !== -1) {
+      const beforeUrl = line.slice(2, urlIdx);
+      const afterPart = line.slice(urlIdx);
+      const spaceIdx = afterPart.indexOf(" ");
+      const url = spaceIdx === -1 ? afterPart : afterPart.slice(0, spaceIdx);
+      const tail = spaceIdx === -1 ? "" : afterPart.slice(spaceIdx);
+      return (
+        <>
+          <span className="font-bold text-emerald-400">✓ </span>
+          <span className="text-zinc-300">{beforeUrl}</span>
+          <span className="font-medium text-emerald-300 underline decoration-emerald-500/35 underline-offset-4">
+            {url}
+          </span>
+          <span className="text-zinc-500">{tail}</span>
+        </>
+      );
+    }
+    if (portIdx !== -1) {
+      const beforePort = line.slice(2, portIdx);
+      const port = line.slice(portIdx);
+      return (
+        <>
+          <span className="font-bold text-emerald-400">✓ </span>
+          <span className="text-zinc-300">{beforePort}</span>
+          <span className="font-medium text-violet-300 tabular-nums">{port}</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <span className="font-bold text-emerald-400">✓ </span>
+        <span className="text-zinc-300">{line.slice(2)}</span>
+      </>
+    );
+  }
+
+  if (line.startsWith("→ ")) {
+    const rest = line.slice(2);
+    const readyIdx = rest.indexOf("  ready");
+    if (readyIdx !== -1) {
+      const url = rest.slice(0, readyIdx);
+      return (
+        <>
+          <span className="font-bold text-emerald-400">→ </span>
+          <span className="font-semibold text-white underline decoration-emerald-400/50 underline-offset-4">
+            {url}
+          </span>
+          <span className="ml-2 inline-flex items-center rounded-md border border-emerald-500/25 bg-emerald-500/15 px-1.5 py-0.5 text-[10.5px] font-semibold tracking-wide text-emerald-300">
+            ready
+          </span>
+        </>
+      );
+    }
+    return (
+      <>
+        <span className="font-bold text-emerald-400">→ </span>
+        <span className="font-semibold text-emerald-300">{rest}</span>
+      </>
+    );
+  }
+
+  return line;
+}
+
 export function Hero() {
   const typing = useTyping(
     `$ portless myapp next dev
@@ -179,8 +260,9 @@ export function Hero() {
                     <span className="size-2.5 rounded-full bg-[#ffbd2e]/90 border border-black/15" />
                     <span className="size-2.5 rounded-full bg-[#27c93f]/90 border border-black/15" />
                   </div>
-                  <span className="ml-1.5 font-mono text-[11.5px] font-medium tracking-wide text-zinc-300">
-                    package.json
+                  <span className="ml-1.5 inline-flex items-center gap-1.5 font-mono text-[11.5px] font-medium tracking-wide text-zinc-300">
+                    <span className="text-zinc-500">myapp /</span>
+                    <span>package.json</span>
                   </span>
                 </div>
                 <button
@@ -211,28 +293,42 @@ export function Hero() {
               {/* Diff Code Body */}
               <div className="flex flex-1 flex-col justify-between p-4">
                 <div className="overflow-x-auto font-mono text-[12px] leading-6 sm:text-[12.5px]">
-                  <div className="px-2 text-zinc-600 select-none">{"\"scripts\": {"}</div>
+                  <div className="flex items-center gap-3 px-2 text-zinc-600 select-none">
+                    <span className="w-3 text-right text-[10.5px] text-zinc-700 tabular-nums">1</span>
+                    <span>{"\"scripts\": {"}</span>
+                  </div>
                   <div className="flex items-center justify-between gap-2 rounded-md border-l-2 border-rose-400/70 bg-rose-500/6 px-2.5 py-1">
-                    <div className="whitespace-pre">
-                      <span className="font-semibold text-rose-400 select-none">- </span>
-                      <span className="text-rose-200/75">{heroDiff.before}</span>
+                    <div className="flex items-center gap-2.5 whitespace-pre">
+                      <span className="w-3 text-right text-[10.5px] text-rose-400/50 tabular-nums select-none">2</span>
+                      <span>
+                        <span className="font-semibold text-rose-400 select-none">- </span>
+                        <span className="text-rose-200/80">"dev"</span>
+                        <span className="text-rose-300/50">: </span>
+                        <span className="text-rose-200/75">"next dev"</span>
+                      </span>
                     </div>
                     <span className="hidden shrink-0 font-mono text-[11px] text-rose-300/45 line-through decoration-rose-400/40 sm:inline">
                       # {heroDiff.beforeUrl}
                     </span>
                   </div>
                   <div className="mt-1 flex items-center justify-between gap-2 rounded-md border-l-2 border-emerald-400/80 bg-emerald-500/8 px-2.5 py-1">
-                    <div className="whitespace-pre">
-                      <span className="font-semibold text-emerald-400 select-none">+ </span>
-                      <span className="font-medium text-zinc-200">"dev"</span>
-                      <span className="text-zinc-400">: </span>
-                      <span className="text-emerald-300">"portless run next dev"</span>
+                    <div className="flex items-center gap-2.5 whitespace-pre">
+                      <span className="w-3 text-right text-[10.5px] text-emerald-400/60 tabular-nums select-none">3</span>
+                      <span>
+                        <span className="font-semibold text-emerald-400 select-none">+ </span>
+                        <span className="font-medium text-zinc-200">"dev"</span>
+                        <span className="text-zinc-400">: </span>
+                        <span className="text-emerald-300">"portless run next dev"</span>
+                      </span>
                     </div>
                     <span className="hidden shrink-0 font-mono text-[11px] text-emerald-300 underline decoration-emerald-400/35 underline-offset-2 sm:inline">
                       # {heroDiff.afterUrl}
                     </span>
                   </div>
-                  <div className="px-2 text-zinc-600 select-none">{"}"}</div>
+                  <div className="flex items-center gap-3 px-2 text-zinc-600 select-none">
+                    <span className="w-3 text-right text-[10.5px] text-zinc-700 tabular-nums">4</span>
+                    <span>{"}"}</span>
+                  </div>
                 </div>
 
                 {/* Address Bar Comparison Strip */}
@@ -297,35 +393,41 @@ export function Hero() {
                 </div>
               </div>
 
-              {/* Terminal Output Body */}
-              <pre className="flex-1 overflow-x-auto p-4 font-mono text-[12px] leading-7 whitespace-pre-wrap sm:text-[12.5px] sm:whitespace-pre min-h-41">
-                <code>
-                  {lines.map((line, i) => {
-                    const isReady = line.startsWith("→");
-                    const isSuccess = line.startsWith("✓");
-                    const isCmd = line.startsWith("$");
-                    return (
-                      <div
-                        key={i}
-                        className={
-                          isCmd
-                            ? "font-medium text-zinc-100"
-                            : isReady
-                              ? "mt-1 font-semibold text-emerald-300"
-                              : isSuccess
-                                ? "text-emerald-300/90"
-                                : "text-zinc-400"
-                        }
-                      >
-                        {line}
-                        {i === lines.length - 1 && !typing.done && (
-                          <span className="ml-0.5 inline-block h-4 w-2 translate-y-0.5 bg-white/80 animate-pulse" />
-                        )}
-                      </div>
-                    );
-                  })}
-                </code>
-              </pre>
+              {/* Terminal Output Body + Route Status Bar */}
+              <div className="flex flex-1 flex-col justify-between p-4">
+                <pre className="overflow-x-auto font-mono text-[12px] leading-6 whitespace-pre-wrap sm:text-[12.5px] sm:whitespace-pre">
+                  <code>
+                    {lines.map((line, i) => {
+                      const isReady = line.startsWith("→");
+                      return (
+                        <div key={i} className={isReady ? "mt-1" : ""}>
+                          {renderTerminalLine(line)}
+                          {i === lines.length - 1 && !typing.done && (
+                            <span className="ml-0.5 inline-block h-4 w-2 translate-y-0.5 bg-white/80 animate-pulse" />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </code>
+                </pre>
+
+                {/* Symmetrical Live Route Mapping Strip */}
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/6 bg-white/2 px-3 py-2 text-[11.5px]">
+                  <div className="flex items-center gap-2 font-mono text-zinc-300">
+                    <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/25 bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300">
+                      route
+                    </span>
+                    <span className="font-medium text-white">myapp.localhost</span>
+                    <span className="text-zinc-600">:443</span>
+                  </div>
+                  <div className="flex items-center gap-2 font-mono text-zinc-400 tabular-nums">
+                    <span className="rounded-md border border-violet-500/25 bg-violet-500/12 px-1.5 py-0.5 text-[10px] font-medium text-violet-300">
+                      127.0.0.1:4123
+                    </span>
+                    <span className="hidden text-[10.5px] text-zinc-500 sm:inline">H2 · TLS</span>
+                  </div>
+                </div>
+              </div>
 
               {/* Card Footer */}
               <div className="flex items-center justify-between border-t border-white/6 bg-white/2 px-4 py-2 text-[11px] text-zinc-500">
@@ -341,6 +443,9 @@ export function Hero() {
           <ArchitectureDiagram />
         </div>
       </div>
+
+      {/* Subtle Section Horizon Hairline */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
     </section>
   );
 }
