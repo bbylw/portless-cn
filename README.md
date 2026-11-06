@@ -41,6 +41,8 @@ portless myapp next dev
 
 代理在你运行应用时自动启动。会通过 `PORT` 环境变量分配一个随机端口（4000–4999）。大多数框架（Next.js、Express、Nuxt 等）会自动读取该变量。对于忽略 `PORT` 的框架（Vite、VitePlus、VitePress、Astro、React Router、Angular、Expo、React Native、Wrangler），portless 会自动注入正确的 `--port` 参数，并在需要时同时注入匹配的 `--host` 参数（Wrangler 为 `--ip`）。注入会穿透到以框架或已知运行器开头的 package 脚本（`"dev": "vite"`、`"dev": "bunx vite"`）。只有框架的服务端命令会获得这些参数（`dev`、`serve`、`preview`、`start`、裸 `vite` 或 `vite [root]`）；不提供服务的命令（如 `vite build`、`vite optimize`、`vp test` 或 `astro check`）会拒绝这些参数并原样保留。Expo 的连接模式（`--localhost`、`--lan`、`--tunnel`）会被保留，同时仍然注入所分配的端口。portless 无法归类的脚本也会原样保留：在它未跟踪参数语法的 CLI 上，子命令之前的某个参数（`vp --mode dev build`）。当附加参数对其无效时，portless 同样会保留脚本原样：复合命令（`&&`、`|`、`;`）、尾部 `#` 注释、其自身的 `--` 选项终止符、环境前缀（`NODE_ENV=production vite`）、委派给另一个脚本（`"dev": "npm run dev:vite"`），或脚本名之前带有运行器参数（`bun run --bun dev`）。这些情况会保留它们自己的端口，因此需要你在脚本中自行设置。
 
+如果被包装的命令会自我守护（进程退出，但它启动的服务器仍在已分配的端口上监听），portless 会让路由继续指向该服务器并打印其 PID。服务器停止时，路由随之移除。
+
 自动启动时，portless 会复用最近一次代理运行时的配置（端口、TLS、TLD），因此重启或重启机器后不会静默回退到默认值。显式环境变量（`PORTLESS_PORT`、`PORTLESS_HTTPS` 等）始终优先。
 
 portless 将按用户状态存储在 `~/.portless`。当代理以 sudo 运行时，它会从调用用户的 home 目录解析此路径，使代理与非特权应用进程共享同一套路由注册。
@@ -417,6 +419,45 @@ portless myapp --cloudflare next dev
 
 设置 `PORTLESS_CLOUDFLARE=1` 可默认启用。`portless list` 会显示 Cloudflare URL，应用会通过 `PORTLESS_CLOUDFLARE_URL` 获得该地址。可与 `--ngrok`、`--tailscale` 或 `--funnel` 组合使用。隧道会在应用退出时停止。Quick Tunnel 不支持 Server-Sent Events，最多允许 200 个在途请求，且每次运行都会获得新的 URL。需要 PATH 中存在 [`cloudflared`](https://developers.cloudflare.com/tunnel/downloads/) CLI。
 
+## Docker Compose
+
+```bash
+portless compose up [args...]
+portless compose up -d [args...]
+portless compose down [args...]
+```
+
+运行一个 Docker Compose 项目，让每个服务都获得具名 URL。每个发布 HTTP 端口的服务都会获得 `https://<service>.<project>.localhost`，因此两个都发布 8080 端口的项目可以同时运行。
+
+```bash
+portless compose up -d   # -> https://web.shop.localhost、https://api.shop.localhost
+portless compose down
+```
+
+把 `-f`、`-p`、`--profile`、`--env-file` 等全局 compose 参数放在命令之前，与 `docker compose` 一致。其他 compose 命令（如 `logs`、`ps`）会原样执行。
+
+项目首次启动时，portless 会为每个已发布的 HTTP 端口在 127.0.0.1 上选择一个空闲端口，并在后续运行中复用。由于端口不变，路由在 `restart`、`stop` 再 `start` 以及 Docker 重启容器后仍然有效。已路由的服务不能扩展到多个容器，因为副本需要使用同一个主机端口。
+
+- 数据库和缓存端口（如 5432、3306、6379、27017）保留其发布端口，因此现有连接字符串继续可用。UDP 端口和 `network_mode: host` 的服务不会被修改。
+- 发布多个 HTTP 端口的服务，第一个端口获得 `<service>.<project>`，其余每个端口获得 `<port>.<service>.<project>`。
+
+在前台运行时，compose 退出后 portless 会移除路由。使用 `-d` 时，路由会保留到你运行 `portless compose down`；`down` 会移除已停止容器的路由，并保留仍在运行的容器路由。在缺少 compose 文件的目录中运行 `down` 时可传入 `-p`。请用 `portless compose up` 启动项目，因为直接运行 `docker compose up` 会用原始端口重建容器。
+
+用 label 配置服务：
+
+```yaml
+services:
+  frontend:
+    labels:
+      portless.name: site # -> https://site.shop.localhost
+      portless.ports: "3000" # 只路由这些容器端口
+  admin:
+    labels:
+      portless.enable: "false" # 保持此服务不变
+```
+
+每个被路由的服务都会获得 `__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS`，因此容器内的 Vite 开发服务器会接受其 portless 主机名。如果服务已设置该变量，portless 会保留其值。
+
 ## 命令
 
 ```bash
@@ -427,6 +468,8 @@ portless <name> <cmd> [args...]  # 在 https://<name>.localhost 运行应用
 portless alias <name> <port>     # 注册一条静态路由（例如用于 Docker）
 portless alias <name> <port> --force  # 覆盖已有路由
 portless alias --remove <name>   # 移除一条静态路由
+portless compose up [args...]    # 运行 Docker Compose 项目，每个服务一条路由
+portless compose down            # 停止项目并移除其路由
 portless list                    # 显示活动路由和运行时长
 portless doctor                  # 检查代理、路由、DNS 以及 CA 信任
 portless trust                   # 将本地 CA 添加到系统信任存储
@@ -510,7 +553,7 @@ PORTLESS_CLOUDFLARE_URL         应用的 Cloudflare URL（当 --cloudflare 生�
 NODE_EXTRA_CA_CERTS             portless CA 的路径（当 HTTPS 生效时）
 ```
 
-> **保留名称：** `run`、`get`、`alias`、`hosts`、`list`、`doctor`、`trust`、`clean`、`prune`、`proxy`、`service` 和 `mcp` 是子命令，不能直接用作应用名。使用 `portless run <cmd>` 从你的项目推断名称，或使用 `portless --name <name> <cmd>` 强制指定任意名称（包括保留名称）。
+> **保留名称：** `run`、`get`、`alias`、`compose`、`hosts`、`list`、`doctor`、`trust`、`clean`、`prune`、`proxy`、`service` 和 `mcp` 是子命令，不能直接用作应用名。使用 `portless run <cmd>` 从你的项目推断名称，或使用 `portless --name <name> <cmd>` 强制指定任意名称（包括保留名称）。
 
 ## MCP 服务器
 

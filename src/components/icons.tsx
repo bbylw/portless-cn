@@ -198,6 +198,20 @@ export function IconUnlock(props: IconProps) {
   );
 }
 
+// Docker Compose (stacked containers)
+export function IconContainer(props: IconProps) {
+  return (
+    <Wrap {...props}>
+      <rect x="3" y="10" width="18" height="9.5" rx="1.6" />
+      <path d="M3 14.2h18" opacity={0.5} />
+      <rect x="5.5" y="4.8" width="3.6" height="3.4" rx="0.8" />
+      <rect x="10.2" y="4.8" width="3.6" height="3.4" rx="0.8" opacity={0.8} />
+      <rect x="14.9" y="4.8" width="3.6" height="3.4" rx="0.8" opacity={0.6} />
+      <path d="M6.8 17.6h2.2M12 17.6h2.2" opacity={0.7} />
+    </Wrap>
+  );
+}
+
 // Logo mark (for navbar/footer) - crisp P
 export function LogoMark({ size = 32 }: { size?: number }) {
   return (

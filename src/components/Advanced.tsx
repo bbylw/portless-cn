@@ -1,6 +1,6 @@
 import { CodeBlock } from "./CodeBlock";
 import { advancedSections, requirements } from "../data";
-import { IconGlobe, IconGit, IconTag, IconBroadcast, IconUsers, IconPlug, IconShare, IconSettings, IconStethoscope, IconShield, IconChip, IconUnlock } from "./icons";
+import { IconGlobe, IconGit, IconTag, IconBroadcast, IconUsers, IconPlug, IconShare, IconSettings, IconStethoscope, IconShield, IconChip, IconUnlock, IconContainer } from "./icons";
 
 const advIconMap: Record<string, React.ReactNode> = {
   "子域名": <IconGlobe size={18} />,
@@ -15,6 +15,7 @@ const advIconMap: Record<string, React.ReactNode> = {
   "404 页面与错误响应": <IconShield size={18} />,
   "MCP 服务器": <IconChip size={18} />,
   "非特权模式": <IconUnlock size={18} />,
+  "Docker Compose": <IconContainer size={18} />,
 };
 
 export function Advanced() {

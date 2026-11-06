@@ -105,6 +105,14 @@ export const commands = [
     desc: "移除一条静态路由",
   },
   {
+    cmd: "portless compose up [args...]",
+    desc: "运行 Docker Compose 项目，每个发布 HTTP 端口的服务获得 <service>.<project>.localhost 路由",
+  },
+  {
+    cmd: "portless compose down [args...]",
+    desc: "停止 Compose 项目并移除其路由",
+  },
+  {
     cmd: "portless list",
     desc: "显示活动路由和运行时长",
   },
@@ -365,6 +373,21 @@ portless clean          # 移除所有状态`,
 
 # Linux：每台机器执行一次
 sudo sysctl -w net.ipv4.ip_unprivileged_port_start=80`,
+  },
+  {
+    icon: "🐳",
+    title: "Docker Compose",
+    desc: "portless compose 在代理后面运行 Compose 项目。每个发布 HTTP 端口的服务获得 <service>.<project>.localhost，两个项目可同时发布相同主机端口；数据库、缓存与 UDP 端口保持不变。",
+    code: `portless compose up -d
+# -> https://web.shop.localhost
+# -> https://api.shop.localhost
+
+portless compose down
+
+# 用 label 配置服务
+labels:
+  portless.name: site      # 自定义路由
+  portless.enable: "false" # 跳过该服务`,
   },
 ];
 
