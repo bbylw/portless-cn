@@ -1,8 +1,18 @@
+import { useState } from "react";
 import { CodeBlock } from "./CodeBlock";
 import { installCommands, quickStart } from "../data";
 import { Link } from "react-router-dom";
+import { copyText } from "../utils/clipboard";
 
 export function Install() {
+  const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
+
+  const handleCopy = async (cmd: string) => {
+    const ok = await copyText(cmd);
+    setStatus(ok ? "copied" : "failed");
+    window.setTimeout(() => setStatus("idle"), 1800);
+  };
+
   return (
     <section id="install" className="relative py-16 sm:py-24">
       <div className="absolute inset-0 bg-gradient-to-b from-violet-500/[0.04] via-transparent to-transparent pointer-events-none" />
@@ -33,7 +43,7 @@ export function Install() {
               <div className="sm:ml-auto w-full sm:w-auto sm:min-w-[360px]">
                 <div className="rounded-xl border border-white/10 bg-[#0e0e10] px-4 py-3 font-mono text-[13px] text-zinc-200 flex items-center justify-between gap-3">
                   <span className="truncate"><span className="text-violet-400">npm</span> install <span className="text-emerald-300">{i === 0 ? "-g portless" : "-D portless"}</span></span>
-                  <button onClick={() => navigator.clipboard.writeText(c.cmd)} className="shrink-0 rounded-full bg-white p-1.5 text-black hover:bg-zinc-100 transition cursor-pointer" aria-label="复制">
+                  <button onClick={() => handleCopy(c.cmd)} className="shrink-0 rounded-full bg-white p-1.5 text-black hover:bg-zinc-100 transition cursor-pointer" aria-label="复制安装命令">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v3" /></svg>
                   </button>
                 </div>
@@ -41,6 +51,9 @@ export function Install() {
             </div>
           ))}
         </div>
+        <p className="sr-only" role="status">
+          {status === "copied" ? "已复制安装命令" : status === "failed" ? "复制失败，请手动选择文本" : ""}
+        </p>
 
         <div className="mx-auto mt-4 max-w-4xl rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 flex gap-3">
           <span className="shrink-0 mt-0.5 size-6 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
@@ -91,9 +104,6 @@ export function Install() {
         <div className="mt-6 text-center">
           <Link to="/docs" className="inline-flex items-center gap-1.5 text-[13px] font-medium text-emerald-400 transition hover:text-emerald-300">
             完整安装与框架说明
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 12h14M13 5l7 7-7 7" />
-            </svg>
           </Link>
         </div>
       </div>

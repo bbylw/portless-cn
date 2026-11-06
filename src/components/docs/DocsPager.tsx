@@ -13,9 +13,6 @@ export function DocsPager({ previous, next }: { previous?: DocsPageMeta; next?: 
         >
           <span className="text-[11px] font-medium tracking-widest uppercase text-white/30">上一页</span>
           <span className="mt-1 flex items-center gap-2 text-[14px] font-medium text-zinc-300 group-hover:text-white">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
             {previous.label}
           </span>
         </Link>
@@ -30,9 +27,6 @@ export function DocsPager({ previous, next }: { previous?: DocsPageMeta; next?: 
           <span className="text-[11px] font-medium tracking-widest uppercase text-white/30">下一页</span>
           <span className="mt-1 flex items-center justify-end gap-2 text-[14px] font-medium text-zinc-300 group-hover:text-white">
             {next.label}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
           </span>
         </Link>
       ) : null}

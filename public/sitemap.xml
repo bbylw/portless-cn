@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://portless.ndjp.net/</loc></url>
+  <url><loc>https://portless.ndjp.net/docs</loc></url>
+  <url><loc>https://portless.ndjp.net/docs/configuration</loc></url>
+  <url><loc>https://portless.ndjp.net/docs/routing</loc></url>
+  <url><loc>https://portless.ndjp.net/docs/proxy</loc></url>
+  <url><loc>https://portless.ndjp.net/docs/sharing</loc></url>
+  <url><loc>https://portless.ndjp.net/docs/docker</loc></url>
+  <url><loc>https://portless.ndjp.net/docs/commands</loc></url>
+  <url><loc>https://portless.ndjp.net/docs/mcp</loc></url>
+  <url><loc>https://portless.ndjp.net/docs/operations</loc></url>
+</urlset>

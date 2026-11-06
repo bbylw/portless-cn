@@ -28,7 +28,7 @@ export function Proxy() {
       <DocSection id="unprivileged" title="非特权模式">
         <DocP>
           低于 1024 的端口通常需要 root，因此 portless 会通过 <InlineCode>sudo</InlineCode> 提权来绑定 443 或 80。在无法提权的机器上（例如受管控的笔记本电脑、CI
-          运行器，或没有终端可输入密码的智能体会话），可以使用 <InlineCode>--unprivileged</InlineCode> 启动代理：
+          运行器，或没有终端可输入密码的 Agent 会话），可以使用 <InlineCode>--unprivileged</InlineCode> 启动代理：
         </DocP>
         <CodeBlock code={`portless proxy start --unprivileged\n# -> http://myapp.localhost，无 sudo 提示，不安装任何东西`} />
         <DocP>
@@ -53,7 +53,7 @@ export function Proxy() {
         </DocP>
         <DocP>
           该模式会记录在状态目录中，因此自动启动会复用它，<InlineCode>PORTLESS_UNPRIVILEGED=1</InlineCode> 无需标志即可选中它。它绝不请求{" "}
-          <InlineCode>sudo</InlineCode>，这也意味着无 TTY 时不退出的规则不适用：代理可以在全新机器上由脚本或智能体自动启动。在 LAN
+          <InlineCode>sudo</InlineCode>，这也意味着无 TTY 时不退出的规则不适用：代理可以在全新机器上由脚本或 Agent 自动启动。在 LAN
           模式下，该标志只省去 sudo 这一步，因为 LAN 模式本来就需要远程对端。在 <InlineCode>service install</InlineCode> 下服务仍以 root
           运行，因此该标志在那里并不能消除提示，但会保留其他效果：除非传入 <InlineCode>--https</InlineCode>，否则在端口 80 上以纯 HTTP
           提供服务、关闭 hosts 同步、仅接受回环对端。

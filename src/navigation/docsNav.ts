@@ -138,7 +138,7 @@ export const docsGroups: { id: DocsGroupId; label: string; pages: DocsPageMeta[]
         path: "/docs/mcp",
         label: "MCP 服务器",
         title: "MCP 服务器",
-        description: "让 AI 智能体通过 stdio MCP 查询路由、管理别名、控制代理并诊断。",
+        description: "让 Agent 通过 stdio MCP 查询路由、管理别名、控制代理并诊断。",
         group: "reference",
         sections: [
           { id: "overview", title: "启动服务器" },

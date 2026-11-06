@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import { copyText } from "../utils/clipboard";
 
 interface CodeBlockProps {
   code: string;
@@ -41,14 +42,12 @@ function highlight(code: string): ReactNode[] {
 }
 
 export function CodeBlock({ code, label, className = "" }: CodeBlockProps) {
-  const [copied, setCopied] = useState(false);
+  const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch {/* ignore */}
+    const ok = await copyText(code);
+    setStatus(ok ? "copied" : "failed");
+    window.setTimeout(() => setStatus("idle"), 1800);
   };
 
   return (
@@ -69,13 +68,18 @@ export function CodeBlock({ code, label, className = "" }: CodeBlockProps) {
       <div className="relative">
         <button
           onClick={handleCopy}
-          className="absolute right-2.5 top-2.5 z-10 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-400 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:text-white hover:border-white/20 hover:bg-zinc-800 transition cursor-pointer"
+          className="absolute right-2.5 top-2.5 z-10 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-400 opacity-100 transition hover:border-white/20 hover:bg-zinc-800 hover:text-white focus-visible:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100 cursor-pointer"
           aria-label="复制代码"
         >
-          {copied ? (
+          {status === "copied" ? (
             <>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5"><path d="M5 13l4 4L19 7" /></svg>
               已复制
+            </>
+          ) : status === "failed" ? (
+            <>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2.2"><path d="M6 18L18 6M6 6l12 12" /></svg>
+              复制失败
             </>
           ) : (
             <>

@@ -16,7 +16,6 @@ export function ArchitectureDiagram() {
               <circle cx="15" cy="9.5" r="1.3" fill="white" fillOpacity="0.25" />
               <path d="M11 18.5l2.2 2.2 4-4" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span className="absolute -top-1 -right-1 flex size-5 items-center justify-center rounded-full bg-white text-[10px] shadow">↗</span>
           </div>
           <span className="rounded-full bg-white text-black px-2.5 py-1 font-mono text-[11px] font-semibold">myapp.localhost</span>
           <span className="text-[11px] text-zinc-500">浏览器</span>

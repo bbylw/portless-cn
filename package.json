@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "bun@1.4.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/bbylw/portless-cn"
@@ -10,9 +11,9 @@
   "homepage": "https://portless.ndjp.net/",
   "scripts": {
     "dev": "portless run vite",
-    "build": "tsc && vite build",
+    "build": "bun scripts/check-docs-sync.mjs && bun x --bun tsc && bun x --bun vite build",
     "preview": "portless run vite preview",
-    "lint": "tsc --noEmit"
+    "lint": "bun scripts/check-docs-sync.mjs && bun x --bun tsc --noEmit"
   },
   "dependencies": {
     "react": "19.3.1",
@@ -20,12 +21,13 @@
     "react-router-dom": "^7"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "4.3.3",
+    "@tailwindcss/vite": "4.3.4",
+    "@types/bun": "^1.4.4",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "@vitejs/plugin-react": "6.1.2",
-    "tailwindcss": "4.3.3",
+    "@vitejs/plugin-react": "6.2.1",
+    "tailwindcss": "4.3.4",
     "typescript": "7.0.2",
-    "vite": "8.3.5"
+    "vite": "8.3.6"
   }
 }

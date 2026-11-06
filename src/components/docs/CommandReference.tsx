@@ -2,20 +2,25 @@ import { useState } from "react";
 import { CodeBlock } from "../CodeBlock";
 import { DocSection, DocP, InlineCode, Callout, DocTable } from "./DocPrimitives";
 import { commands, options, envVars } from "../../data";
+import { copyText } from "../../utils/clipboard";
 
 export function CommandReference() {
   const [query, setQuery] = useState("");
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
   const normalized = query.trim().toLowerCase();
 
-  const filteredCommands = commands.filter(
-    (item) => !normalized || item.cmd.toLowerCase().includes(normalized) || item.desc.includes(query),
-  );
-  const filteredOptions = options.filter(
-    (item) => !normalized || item.flag.toLowerCase().includes(normalized) || item.desc.includes(query),
-  );
-  const filteredEnv = envVars.filter(
-    (item) => !normalized || item.name.toLowerCase().includes(normalized) || item.desc.includes(query),
-  );
+  const matches = (...fields: string[]) =>
+    !normalized || fields.some((field) => field.toLowerCase().includes(normalized));
+
+  const filteredCommands = commands.filter((item) => matches(item.cmd, item.desc));
+  const filteredOptions = options.filter((item) => matches(item.flag, item.desc));
+  const filteredEnv = envVars.filter((item) => matches(item.name, item.desc));
+
+  const handleCopy = async (cmd: string) => {
+    const ok = await copyText(cmd);
+    setCopyStatus(ok ? "copied" : "failed");
+    window.setTimeout(() => setCopyStatus("idle"), 1800);
+  };
 
   return (
     <div className="space-y-10">
@@ -36,6 +41,7 @@ export function CommandReference() {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="搜索命令、选项、环境变量…"
+          aria-label="搜索命令、选项、环境变量"
           className="w-full rounded-full border border-white/10 bg-white/[0.04] py-2.5 pl-9 pr-10 text-sm text-white placeholder:text-zinc-500 transition focus:border-white/20 focus:bg-white/[0.06] focus:outline-none"
         />
         {query && (
@@ -56,9 +62,9 @@ export function CommandReference() {
           <DocP>没有匹配的命令。</DocP>
         ) : (
           <div className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
-            {filteredCommands.map((item) => (
+            {filteredCommands.map((item, index) => (
               <div
-                key={item.cmd}
+                key={`${item.cmd}-${index}`}
                 className="group flex flex-col gap-1.5 border-b border-white/[0.06] px-4 py-3.5 last:border-0 transition hover:bg-white/[0.03] sm:flex-row sm:items-center sm:gap-4"
               >
                 <code className="shrink-0 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 font-mono text-[12.5px] font-medium text-emerald-300">
@@ -66,8 +72,8 @@ export function CommandReference() {
                 </code>
                 <span className="flex-1 text-[13.5px] text-zinc-400">{item.desc}</span>
                 <button
-                  onClick={() => navigator.clipboard.writeText(item.cmd)}
-                  className="hidden size-7 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/40 opacity-0 transition hover:bg-white/10 hover:text-white group-hover:opacity-100 sm:inline-flex"
+                  onClick={() => handleCopy(item.cmd)}
+                  className="hidden size-7 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/40 opacity-0 transition hover:bg-white/10 hover:text-white focus-visible:opacity-100 sm:inline-flex sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
                   aria-label="复制命令"
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -79,6 +85,9 @@ export function CommandReference() {
             ))}
           </div>
         )}
+        <p className="sr-only" role="status">
+          {copyStatus === "copied" ? "已复制命令" : copyStatus === "failed" ? "复制失败，请手动选择文本" : ""}
+        </p>
       </DocSection>
 
       <DocSection id="options" title="选项">
@@ -131,8 +140,13 @@ export function CommandReference() {
       </DocSection>
 
       <DocSection id="bypass" title="绕过代理">
-        <DocP>需要临时跳过 portless、直接运行命令时，设置 PORTLESS=0：</DocP>
+        <DocP>
+          需要临时跳过 portless、直接运行命令时，设置 <InlineCode>PORTLESS=0</InlineCode>：
+        </DocP>
         <CodeBlock code={`PORTLESS=0 pnpm dev              # 绕过代理，使用默认端口`} />
+        <DocP>
+          在非交互式环境（无 TTY 或 <InlineCode>CI=1</InlineCode>）中，portless 会以描述性错误退出而不是弹出提示，便于 CI 脚本尽早失败。
+        </DocP>
       </DocSection>
     </div>
   );

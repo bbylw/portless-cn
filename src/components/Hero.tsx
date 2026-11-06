@@ -46,7 +46,7 @@ export function Hero() {
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--color-brand)] opacity-60"></span>
               <span className="relative inline-flex size-2 rounded-full bg-[var(--color-brand)] shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
             </span>
-            为人类和智能体 <span className="text-white/40">·</span> <span className="text-white">agent</span> 设计
+            为人类和 <span className="text-white">Agent</span> 设计
             <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full bg-white text-black px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase">NEW</span>
           </div>
 
@@ -65,9 +65,6 @@ export function Hero() {
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to="/docs" className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-[14.5px] font-semibold text-black shadow-[0_4px_20px_rgba(255,255,255,0.18),0_1px_2px_rgba(0,0,0,0.2)] hover:bg-zinc-100 transition">
               快速开始
-              <span className="flex size-6 items-center justify-center rounded-full bg-black text-white group-hover:translate-x-0.5 transition-transform">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
-              </span>
             </Link>
             <Link to="/docs/commands" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] backdrop-blur px-7 py-3.5 text-[14.5px] font-medium text-white hover:bg-white/10 hover:border-white/15 transition">
               <IconBrowserSmall size={16} />

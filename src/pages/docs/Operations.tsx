@@ -1,5 +1,5 @@
 import { CodeBlock } from "../../components/CodeBlock";
-import { DocSection, DocP, InlineCode, Callout } from "../../components/docs/DocPrimitives";
+import { DocSection, DocP, InlineCode, Callout, ExtLink } from "../../components/docs/DocPrimitives";
 
 export function Operations() {
   return (
@@ -74,11 +74,12 @@ export function Operations() {
 
       <DocSection id="development" title="开发">
         <DocP>
-          本仓库是一个使用 Turborepo 的 pnpm workspace monorepo。可发布的包位于{" "}
-          <InlineCode>packages/portless/</InlineCode>。
+          本仓库是一个使用 <ExtLink href="https://turbo.build">Turborepo</ExtLink> 的 pnpm workspace monorepo。可发布的包位于{" "}
+          <ExtLink href="https://github.com/vercel-labs/portless/tree/main/packages/portless">packages/portless/</ExtLink>。
         </DocP>
         <DocP>
-          进行仓库开发请使用 Node.js 24+ 与 pnpm 11。<InlineCode>.node-version</InlineCode> 文件为版本管理器固定了 Node 主版本。
+          进行仓库开发请使用 Node.js 24+ 与 pnpm 11。
+          <ExtLink href="https://github.com/vercel-labs/portless/blob/main/.node-version">.node-version</ExtLink> 文件为版本管理器固定了 Node 主版本。
         </DocP>
         <CodeBlock
           code={`pnpm install          # 安装所有依赖\npnpm build            # 构建所有包\npnpm test             # 运行测试\npnpm test:coverage    # 运行带覆盖率的测试\npnpm lint             # 对所有包进行 Lint\npnpm type-check       # 对所有包进行类型检查\npnpm format           # 使用 Prettier 格式化所有文件`}

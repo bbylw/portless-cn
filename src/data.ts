@@ -1,5 +1,8 @@
 /** 首页各区域所需的内容数据，全部来自 README.md 文档 */
 
+/** 上游 portless 版本：同步上游文档时与 npm latest 一并核对。 */
+export const upstreamVersion = "0.16.0";
+
 export const heroDiff = {
   before: '"dev": "next dev"',
   beforeUrl: "http://localhost:3000",
@@ -82,7 +85,11 @@ export const quickStart = [
 export const commands = [
   {
     cmd: "portless",
-    desc: "通过代理运行 dev 脚本；在 monorepo 根目录运行所有工作区包",
+    desc: "通过代理运行 dev 脚本",
+  },
+  {
+    cmd: "portless",
+    desc: "在 monorepo 根目录运行：运行所有工作区包",
   },
   {
     cmd: "portless run [--name <name>] [cmd] [args...]",
@@ -142,7 +149,7 @@ export const commands = [
   },
   {
     cmd: "portless mcp [--tools <profiles>]",
-    desc: "启动 stdio MCP 服务器，供 AI 智能体查询路由、管理别名、控制代理并诊断",
+    desc: "启动 stdio MCP 服务器，供 Agent 查询路由、管理别名、控制代理并诊断",
   },
   {
     cmd: "portless proxy start",
@@ -219,15 +226,16 @@ export const options = [
   { flag: "--cloudflare", desc: "通过 Cloudflare Quick Tunnel 公开共享应用" },
   { flag: "--force", desc: "杀掉现有进程并接管其路由" },
   { flag: "--name <name>", desc: "使用 <name> 作为应用名" },
+  { flag: "--tools <profiles>", desc: "仅 portless mcp：选择 MCP 工具配置组（core、proxy、diagnostics、all，可用逗号分隔）" },
 ];
 
 export const envVars = [
-  { name: "PORTLESS_PORT", desc: "覆盖默认代理端口", group: "配置" },
-  { name: "PORTLESS_APP_PORT", desc: "为应用使用固定端口（同 --app-port）", group: "配置" },
+  { name: "PORTLESS_PORT=<number>", desc: "覆盖默认代理端口", group: "配置" },
+  { name: "PORTLESS_APP_PORT=<number>", desc: "为应用使用固定端口（同 --app-port）", group: "配置" },
   { name: "PORTLESS_HTTPS=0", desc: "禁用 HTTPS（同 --no-tls）", group: "配置" },
   { name: "PORTLESS_LAN=1", desc: "设置为 1 时启用 LAN 模式（自动检测 LAN IP）", group: "配置" },
-  { name: "PORTLESS_LAN_IP", desc: "为 LAN 模式固定一个特定 LAN IP", group: "配置" },
-  { name: "PORTLESS_TLD", desc: "使用一个或更多 TLD（例如 localhost,test）", group: "配置" },
+  { name: "PORTLESS_LAN_IP=<address>", desc: "为 LAN 模式固定一个特定 LAN IP", group: "配置" },
+  { name: "PORTLESS_TLD=<tld>[,<tld>]", desc: "使用一个或更多 TLD（例如 localhost,test）", group: "配置" },
   { name: "PORTLESS_WILDCARD=1", desc: "允许未注册子域名回退到父路由", group: "配置" },
   { name: "PORTLESS_SYNC_HOSTS=0", desc: "禁用 /etc/hosts 的自动同步（默认开启）", group: "配置" },
   { name: "PORTLESS_TAILSCALE=1", desc: "在你的 Tailscale 网络上共享应用（同 --tailscale）", group: "配置" },
@@ -235,7 +243,8 @@ export const envVars = [
   { name: "PORTLESS_NGROK=1", desc: "通过 ngrok 公开共享应用（同 --ngrok）", group: "配置" },
   { name: "PORTLESS_UNPRIVILEGED=1", desc: "不用 sudo 绑定 1024 以下端口（同 --unprivileged）", group: "配置" },
   { name: "PORTLESS_CLOUDFLARE=1", desc: "通过 Cloudflare Quick Tunnel 公开共享应用（同 --cloudflare）", group: "配置" },
-  { name: "PORTLESS_STATE_DIR", desc: "覆盖状态目录", group: "配置" },
+  { name: "PORTLESS_STATE_DIR=<path>", desc: "覆盖状态目录", group: "配置" },
+  { name: "PORTLESS=0", desc: "绕过代理，直接运行命令（使用默认端口）", group: "配置" },
   { name: "PORT", desc: "子进程应监听的临时端口", group: "注入到子进程" },
   { name: "HOST", desc: "通常为 127.0.0.1（LAN 模式下 Expo 会省略）", group: "注入到子进程" },
   { name: "PORTLESS_URL", desc: "主要公开 URL（例如 https://myapp.localhost）", group: "注入到子进程" },

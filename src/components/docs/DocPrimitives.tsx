@@ -30,6 +30,19 @@ export function Callout({ children, tone = "amber" }: { children: ReactNode; ton
   return <div className={`rounded-xl border px-4 py-3 text-[13.5px] leading-6 ${tones[tone]}`}>{children}</div>;
 }
 
+export function ExtLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-emerald-300 underline decoration-emerald-500/40 underline-offset-2 transition hover:text-emerald-200 hover:decoration-emerald-400"
+    >
+      {children}
+    </a>
+  );
+}
+
 export function DocTable({ columns, rows }: { columns: string[]; rows: ReactNode[][] }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-white/10 bg-white/[0.02]">

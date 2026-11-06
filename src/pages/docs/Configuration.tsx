@@ -1,5 +1,5 @@
 import { CodeBlock } from "../../components/CodeBlock";
-import { DocSection, DocP, InlineCode, Callout, DocTable } from "../../components/docs/DocPrimitives";
+import { DocSection, DocP, InlineCode, Callout, DocTable, ExtLink } from "../../components/docs/DocPrimitives";
 import { configFields } from "../../data";
 
 export function Configuration() {
@@ -70,7 +70,8 @@ export function Configuration() {
       <DocSection id="monorepo" title="Monorepo">
         <DocP>
           仓库根目录下一个 <InlineCode>portless.json</InlineCode> 即可覆盖所有工作区包。portless 从{" "}
-          <InlineCode>pnpm-workspace.yaml</InlineCode>、或 <InlineCode>package.json</InlineCode> 中的{" "}
+          <ExtLink href="https://github.com/vercel-labs/portless/blob/main/pnpm-workspace.yaml">pnpm-workspace.yaml</ExtLink>、或{" "}
+          <InlineCode>package.json</InlineCode> 中的{" "}
           <InlineCode>"workspaces"</InlineCode> 字段（npm、yarn、bun）发现包：
         </DocP>
         <CodeBlock

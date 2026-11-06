@@ -1,5 +1,5 @@
 import { CodeBlock } from "../../components/CodeBlock";
-import { DocSection, DocP, DocList, InlineCode, Callout } from "../../components/docs/DocPrimitives";
+import { DocSection, DocP, DocList, InlineCode, Callout, ExtLink } from "../../components/docs/DocPrimitives";
 
 export function Sharing() {
   return (
@@ -47,7 +47,7 @@ export function Sharing() {
       </DocSection>
 
       <DocSection id="tailscale" title="Tailscale">
-        <DocP>与 Tailscale 网络上的队友共享你的开发服务器：</DocP>
+        <DocP>与 <ExtLink href="https://tailscale.com">Tailscale</ExtLink> 网络上的队友共享你的开发服务器：</DocP>
         <CodeBlock
           code={`portless myapp --tailscale next dev\n# -> https://myapp.localhost           (本地)\n# -> https://devbox.yourteam.ts.net    (tailnet)`}
         />
@@ -58,7 +58,10 @@ export function Sharing() {
         <CodeBlock
           code={`portless myapp --tailscale next dev     # -> https://devbox.ts.net\nportless api --tailscale pnpm start     # -> https://devbox.ts.net:8443`}
         />
-        <DocP>使用 --funnel 通过 Tailscale Funnel 将开发服务器暴露到公共互联网：</DocP>
+        <DocP>
+          使用 <InlineCode>--funnel</InlineCode> 通过{" "}
+          <ExtLink href="https://tailscale.com/kb/1223/funnel/">Tailscale Funnel</ExtLink> 将开发服务器暴露到公共互联网：
+        </DocP>
         <CodeBlock code={`portless myapp --funnel next dev\n# -> https://devbox.yourteam.ts.net    (公共)`} />
         <Callout>
           在 <InlineCode>--tailscale</InlineCode> 或 <InlineCode>--funnel</InlineCode> 能够注册 HTTPS URL 之前，必须先启用 Tailscale
@@ -76,7 +79,7 @@ export function Sharing() {
       </DocSection>
 
       <DocSection id="ngrok" title="ngrok">
-        <DocP>通过 ngrok 将开发服务器暴露到公共互联网：</DocP>
+        <DocP>通过 <ExtLink href="https://ngrok.com">ngrok</ExtLink> 将开发服务器暴露到公共互联网：</DocP>
         <CodeBlock
           code={`portless myapp --ngrok next dev\n# -> https://myapp.localhost           (本地)\n# -> https://abc123.ngrok.app          (公共)`}
         />
@@ -103,7 +106,7 @@ export function Sharing() {
         </DocP>
         <Callout>
           Quick Tunnel 不支持 Server-Sent Events，最多允许 200 个在途请求，且每次运行都会获得新的 URL。需要 PATH 中存在{" "}
-          <InlineCode>cloudflared</InlineCode> CLI。
+          <ExtLink href="https://developers.cloudflare.com/tunnel/downloads/">cloudflared</ExtLink> CLI。
         </Callout>
       </DocSection>
     </div>
