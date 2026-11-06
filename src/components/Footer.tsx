@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { upstreamVersion } from "../data";
 import { LogoSvg } from "./LogoSvg";
+import { useUpstreamVersion } from "../hooks/useUpstreamVersion";
 
 export function Footer() {
+  const upstreamVersion = useUpstreamVersion();
   return (
     <footer className="relative border-t border-white/10 overflow-hidden">
       <div className="absolute inset-0 bg-linear-to-b from-white/2 to-transparent pointer-events-none" />

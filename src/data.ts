@@ -1,7 +1,12 @@
 /** 首页各区域所需的内容数据，全部来自 README.md 文档 */
 
-/** 上游 portless 版本：同步上游文档时与 npm latest 一并核对。 */
-export const upstreamVersion = "0.16.0";
+declare const __UPSTREAM_VERSION__: string | undefined;
+
+/** 上游 portless 版本：构建时与客户端均自动向 npm registry latest 同步，离线时回退到基线版本。 */
+export const upstreamVersion: string =
+  typeof __UPSTREAM_VERSION__ === "string" && __UPSTREAM_VERSION__.length > 0
+    ? __UPSTREAM_VERSION__
+    : "0.16.0";
 
 export const heroDiff = {
   before: '"dev": "next dev"',

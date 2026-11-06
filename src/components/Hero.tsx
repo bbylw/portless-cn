@@ -1,9 +1,10 @@
 import { ArchitectureDiagram } from "./ArchitectureDiagram";
-import { heroDiff, upstreamVersion } from "../data";
+import { heroDiff } from "../data";
 import { useEffect, useState } from "react";
 import { IconBrowserSmall } from "./icons";
 import { Link } from "react-router-dom";
 import { copyText } from "../utils/clipboard";
+import { useUpstreamVersion } from "../hooks/useUpstreamVersion";
 
 function useTyping(text: string, speed = 28, startDelay = 600) {
   const [out, setOut] = useState("");
@@ -122,6 +123,7 @@ function renderTerminalLine(line: string) {
 }
 
 export function Hero() {
+  const upstreamVersion = useUpstreamVersion();
   const typing = useTyping(
     `$ portless myapp next dev
 ✓ proxy listening on https://myapp.localhost (443)
