@@ -1,5 +1,6 @@
 import { CodeBlock } from "./CodeBlock";
 import { installCommands, quickStart } from "../data";
+import { Link } from "react-router-dom";
 
 export function Install() {
   return (
@@ -86,6 +87,14 @@ export function Install() {
           <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">自动推断应用名</span>
           <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">自动注入 PORT / HOST</span>
           <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">自动信任本地 CA</span>
+        </div>
+        <div className="mt-6 text-center">
+          <Link to="/docs" className="inline-flex items-center gap-1.5 text-[13px] font-medium text-emerald-400 transition hover:text-emerald-300">
+            完整安装与框架说明
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
       </div>
     </section>

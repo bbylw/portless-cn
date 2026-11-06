@@ -1,63 +1,49 @@
-import { Navbar } from "./components/Navbar";
-import { Hero } from "./components/Hero";
-import { Features } from "./components/Features";
-import { Install } from "./components/Install";
-import { Commands } from "./components/Commands";
-import { Config } from "./components/Config";
-import { Advanced } from "./components/Advanced";
-import { Footer } from "./components/Footer";
-import { useEffect, useState } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { RootLayout } from "./layouts/RootLayout";
+import { LandingLayout } from "./layouts/LandingLayout";
+import { DocsLayout } from "./layouts/DocsLayout";
+import { LandingPage } from "./pages/LandingPage";
+import { NotFound } from "./pages/NotFound";
+import { GettingStarted } from "./pages/docs/GettingStarted";
+import { Configuration } from "./pages/docs/Configuration";
+import { Routing } from "./pages/docs/Routing";
+import { Proxy } from "./pages/docs/Proxy";
+import { Sharing } from "./pages/docs/Sharing";
+import { Docker } from "./pages/docs/Docker";
+import { CommandsReference } from "./pages/docs/CommandsReference";
+import { Mcp } from "./pages/docs/Mcp";
+import { Operations } from "./pages/docs/Operations";
 
-function ScrollProgress() {
-  useEffect(() => {
-    const bar = document.getElementById("scroll-progress");
-    if (!bar) return;
-    const onScroll = () => {
-      const h = document.documentElement;
-      const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
-      bar.style.transform = `scaleX(${scrolled})`;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  return <div id="scroll-progress" />;
-}
-
-function BackToTop() {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > 600);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  if (!show) return null;
-  return (
-    <button
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className="fixed bottom-6 right-6 z-40 flex size-10 items-center justify-center rounded-full bg-white text-black shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:bg-zinc-100 transition cursor-pointer"
-      aria-label="回到顶部"
-    >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
-    </button>
-  );
-}
+const router = createBrowserRouter([
+  {
+    element: <RootLayout />,
+    children: [
+      {
+        element: <LandingLayout />,
+        children: [
+          { index: true, element: <LandingPage /> },
+          { path: "*", element: <NotFound /> },
+        ],
+      },
+      {
+        path: "docs",
+        element: <DocsLayout />,
+        children: [
+          { index: true, element: <GettingStarted /> },
+          { path: "configuration", element: <Configuration /> },
+          { path: "routing", element: <Routing /> },
+          { path: "proxy", element: <Proxy /> },
+          { path: "sharing", element: <Sharing /> },
+          { path: "docker", element: <Docker /> },
+          { path: "commands", element: <CommandsReference /> },
+          { path: "mcp", element: <Mcp /> },
+          { path: "operations", element: <Operations /> },
+        ],
+      },
+    ],
+  },
+]);
 
 export default function App() {
-  return (
-    <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] selection:bg-emerald-500/30">
-      <ScrollProgress />
-      <Navbar />
-      <main>
-        <Hero />
-        <Features />
-        <Install />
-        <Commands />
-        <Config />
-        <Advanced />
-      </main>
-      <Footer />
-      <BackToTop />
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }

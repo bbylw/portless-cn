@@ -69,7 +69,7 @@ export function CodeBlock({ code, label, className = "" }: CodeBlockProps) {
       <div className="relative">
         <button
           onClick={handleCopy}
-          className="absolute right-2.5 top-2.5 z-10 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-400 opacity-0 group-hover:opacity-100 hover:text-white hover:border-white/20 hover:bg-zinc-800 transition cursor-pointer"
+          className="absolute right-2.5 top-2.5 z-10 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-zinc-400 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:text-white hover:border-white/20 hover:bg-zinc-800 transition cursor-pointer"
           aria-label="复制代码"
         >
           {copied ? (
