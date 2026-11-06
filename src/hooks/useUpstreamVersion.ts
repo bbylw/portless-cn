@@ -65,3 +65,4 @@ export function useUpstreamVersion(): string {
 
   return version;
 }
+
