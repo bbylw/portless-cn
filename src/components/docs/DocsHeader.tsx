@@ -1,13 +1,18 @@
 import { Link, NavLink } from "react-router-dom";
-import { LogoMark } from "../icons";
+import { LogoSvg } from "../LogoSvg";
 
 export function DocsHeader({ onOpenNav }: { onOpenNav: () => void }) {
   return (
     <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[rgba(9,9,11,0.82)] backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-3 px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex shrink-0 items-center gap-2.5 text-white hover:opacity-90 transition">
-          <LogoMark size={28} />
-          <span className="hidden text-[16px] font-semibold tracking-tight sm:inline">portless</span>
+        <Link to="/" className="flex shrink-0 items-center gap-3 group">
+          <div className="shadow-[0_2px_10px_rgba(34,197,94,0.35)] group-hover:shadow-[0_4px_16px_rgba(34,197,94,0.45)] transition-shadow rounded-[10px] overflow-hidden">
+            <LogoSvg size={32} />
+          </div>
+          <div className="hidden flex-col leading-none sm:flex">
+            <span className="text-[16px] font-semibold tracking-tight text-white">portless</span>
+            <span className="mt-0.5 text-[9.5px] font-medium uppercase tracking-widest text-[var(--color-text-faint)]">Localhost · Named</span>
+          </div>
         </Link>
 
         <span className="rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-1 text-[10px] font-semibold tracking-widest uppercase text-zinc-400">
