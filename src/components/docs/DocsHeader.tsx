@@ -6,7 +6,7 @@ export function DocsHeader({ onOpenNav }: { onOpenNav: () => void }) {
     <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[rgba(9,9,11,0.82)] backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-3 px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex shrink-0 items-center gap-3 group">
-          <div className="shadow-[0_2px_10px_rgba(34,197,94,0.35)] group-hover:shadow-[0_4px_16px_rgba(34,197,94,0.45)] transition-shadow rounded-[10px] overflow-hidden">
+          <div className="rounded-[9px] shadow-[0_2px_12px_rgba(34,197,94,0.2)] transition duration-300 group-hover:scale-[1.03] group-hover:shadow-[0_4px_18px_rgba(34,197,94,0.32)]">
             <LogoSvg size={32} />
           </div>
           <div className="hidden flex-col leading-none sm:flex">

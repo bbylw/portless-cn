@@ -1,14 +1,24 @@
-import { CodeBlock } from "./CodeBlock";
 import { ArchitectureDiagram } from "./ArchitectureDiagram";
-import { heroDiff } from "../data";
+import { heroDiff, upstreamVersion } from "../data";
 import { useEffect, useState } from "react";
 import { IconBrowserSmall } from "./icons";
 import { Link } from "react-router-dom";
+import { copyText } from "../utils/clipboard";
 
 function useTyping(text: string, speed = 28, startDelay = 600) {
   const [out, setOut] = useState("");
   const [done, setDone] = useState(false);
+  const [runId, setRunId] = useState(0);
+
   useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      setOut(text);
+      setDone(true);
+      return;
+    }
+
+    setOut("");
+    setDone(false);
     let i = 0;
     let t: number;
     const start = window.setTimeout(() => {
@@ -21,108 +31,313 @@ function useTyping(text: string, speed = 28, startDelay = 600) {
         }
       }, speed);
     }, startDelay);
-    return () => { window.clearTimeout(start); window.clearInterval(t); };
-  }, [text, speed, startDelay]);
-  return { out, done };
+    return () => {
+      window.clearTimeout(start);
+      window.clearInterval(t);
+    };
+  }, [text, speed, startDelay, runId]);
+
+  return { out, done, replay: () => setRunId((n) => n + 1) };
 }
 
 export function Hero() {
-  const typing = useTyping(`$ portless myapp next dev
-✓ proxy listening on https://myapp.localhost  (443)
+  const typing = useTyping(
+    `$ portless myapp next dev
+✓ proxy listening on https://myapp.localhost (443)
 ✓ app registered → :4123
-→ https://myapp.localhost  ready`, 18, 900);
+→ https://myapp.localhost  ready`,
+    18,
+    750,
+  );
+
+  const [diffCopied, setDiffCopied] = useState(false);
+  const [cmdCopied, setCmdCopied] = useState(false);
+
+  const handleCopyDiff = async () => {
+    const ok = await copyText(heroDiff.after);
+    if (ok) {
+      setDiffCopied(true);
+      window.setTimeout(() => setDiffCopied(false), 1800);
+    }
+  };
+
+  const handleCopyInstall = async () => {
+    const ok = await copyText("npm install -g portless");
+    if (ok) {
+      setCmdCopied(true);
+      window.setTimeout(() => setCmdCopied(false), 1800);
+    }
+  };
+
+  const lines = typing.out.split("\n");
 
   return (
     <section className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
-      <div className="absolute inset-0 grid-bg grid-bg-fade opacity-[0.6]" />
-      <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-[700px] w-[1200px] rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(34,197,94,0.12),_transparent_60%)] blur-2xl" />
-      <div className="absolute top-32 right-[8%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle_at_center,_rgba(139,92,246,0.14),_transparent_70%)] blur-2xl" />
-      <div className="absolute bottom-0 left-[10%] h-[360px] w-[600px] rounded-full bg-[radial-gradient(circle_at_center,_rgba(34,197,94,0.07),_transparent_70%)] blur-2xl" />
+      <div className="pointer-events-none absolute inset-0 grid-bg grid-bg-fade opacity-[0.55]" />
+      <div className="pointer-events-none absolute -top-24 left-1/2 h-[680px] w-[1160px] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,_rgba(34,197,94,0.12),_transparent_62%)] blur-2xl" />
+      <div className="pointer-events-none absolute top-28 right-[8%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle_at_center,_rgba(139,92,246,0.13),_transparent_70%)] blur-2xl" />
+      <div className="pointer-events-none absolute bottom-0 left-[10%] h-[360px] w-[600px] rounded-full bg-[radial-gradient(circle_at_center,_rgba(34,197,94,0.07),_transparent_70%)] blur-2xl" />
 
       <div className="relative mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] backdrop-blur px-3.5 py-1.5 text-[12.5px] font-medium text-zinc-300 shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/[0.09] bg-white/[0.04] px-3.5 py-1.5 text-[12.5px] font-medium text-zinc-300 shadow-[0_1px_2px_rgba(0,0,0,0.25)] backdrop-blur">
             <span className="relative flex size-2">
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--color-brand)] opacity-60"></span>
               <span className="relative inline-flex size-2 rounded-full bg-[var(--color-brand)] shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
             </span>
-            为人类和 <span className="text-white">Agent</span> 设计
-            <span className="ml-1 hidden sm:inline-flex items-center gap-1 rounded-full bg-white text-black px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase">NEW</span>
+            <span>
+              为人类和 <span className="font-semibold text-white">Agent</span> 设计
+            </span>
+            <span className="h-3 w-px bg-white/15" />
+            <span className="font-mono text-[11.5px] text-emerald-300">v{upstreamVersion}</span>
+            <span className="hidden items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase text-black sm:inline-flex">
+              NEW
+            </span>
           </div>
 
-          <h1 className="text-[38px] font-[800] tracking-[-0.04em] leading-[0.95] sm:text-[56px] lg:text-[68px]">
-            <span className="block text-white">用具名的</span>
-            <span className="gradient-text">.localhost</span>
-            <span className="text-white"> URL</span>
-            <span className="block text-white mt-1">取代端口号</span>
+          <h1 className="text-[38px] font-bold tracking-[-0.035em] leading-[1.12] text-balance sm:text-[56px] sm:leading-[1.08] lg:text-[66px]">
+            <span className="block bg-gradient-to-b from-white via-white to-zinc-200 bg-clip-text text-transparent">
+              用具名的
+            </span>
+            <span className="mt-1 block">
+              <span className="gradient-text">.localhost</span>
+              <span className="bg-gradient-to-b from-white via-white to-zinc-200 bg-clip-text text-transparent"> URL</span>
+            </span>
+            <span className="mt-1 block bg-gradient-to-b from-white via-white to-zinc-300 bg-clip-text text-transparent">
+              取代端口号
+            </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-[640px] text-[17px] leading-relaxed text-zinc-400 sm:text-[18px]">
-            portless 让本地开发服务器运行在稳定、具名的
-            <span className="text-white font-medium"> HTTPS URL</span> 上。端口号随时变，具名域名始终稳定。开箱即用，无需手动配置。
+          <p className="mx-auto mt-6 max-w-[660px] text-[16.5px] leading-[1.75] text-zinc-400 sm:text-[18px]">
+            portless 让本地开发服务器运行在稳定、具名的{" "}
+            <span className="font-medium text-white">HTTPS URL</span> 上。
+            <br className="hidden sm:inline" />
+            端口号随时变，具名域名始终稳定。开箱即用，无需手动配置。
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link to="/docs" className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-[14.5px] font-semibold text-black shadow-[0_4px_20px_rgba(255,255,255,0.18),0_1px_2px_rgba(0,0,0,0.2)] hover:bg-zinc-100 transition">
+            <Link
+              to="/docs"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-[14.5px] font-semibold text-black shadow-[0_4px_20px_rgba(255,255,255,0.18),0_1px_2px_rgba(0,0,0,0.2)] transition duration-200 hover:bg-zinc-100 active:scale-[0.98] sm:w-auto"
+            >
               快速开始
             </Link>
-            <Link to="/docs/commands" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] backdrop-blur px-7 py-3.5 text-[14.5px] font-medium text-white hover:bg-white/10 hover:border-white/15 transition">
+            <Link
+              to="/docs/commands"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-7 py-3.5 text-[14.5px] font-medium text-white backdrop-blur transition duration-200 hover:border-white/20 hover:bg-white/10 active:scale-[0.98] sm:w-auto"
+            >
               <IconBrowserSmall size={16} />
               查看命令
             </Link>
+            <button
+              type="button"
+              onClick={handleCopyInstall}
+              className="inline-flex w-full items-center justify-center gap-2.5 rounded-full border border-white/[0.08] bg-[#0e0e11]/90 px-4 py-3.5 font-mono text-[13px] text-zinc-300 shadow-inner transition duration-200 hover:border-emerald-500/35 hover:text-white active:scale-[0.98] sm:w-auto cursor-pointer"
+              aria-label="复制全局安装命令 npm install -g portless"
+            >
+              <span className="text-zinc-500 select-none">$</span>
+              <span>
+                <span className="text-violet-300">npm</span> i <span className="text-emerald-300">-g portless</span>
+              </span>
+              {cmdCopied ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 font-sans text-[11px] font-medium text-emerald-300">
+                  已复制
+                </span>
+              ) : (
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-zinc-500">
+                  <rect x="9" y="9" width="13" height="13" rx="2" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v3" />
+                </svg>
+              )}
+            </button>
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-zinc-500">
-            <span className="inline-flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-emerald-500"></span> 零配置启动</span>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-zinc-500">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="size-1.5 rounded-full bg-emerald-500"></span> 零配置启动
+            </span>
             <span className="size-1 rounded-full bg-white/15"></span>
-            <span className="inline-flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-violet-500"></span> HTTPS + HTTP/2</span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="size-1.5 rounded-full bg-violet-500"></span> HTTPS + HTTP/2
+            </span>
             <span className="size-1 rounded-full bg-white/15"></span>
-            <span>Node.js 24+ · macOS / Linux / Windows</span>
+            <span className="tabular-nums">Node.js 24+ · macOS / Linux / Windows</span>
           </div>
         </div>
 
-        <div className="mx-auto mt-12 grid max-w-5xl gap-5 lg:grid-cols-5">
-          <div className="lg:col-span-3">
-            <div className="relative">
-              <div className="absolute -inset-3 rounded-[20px] bg-gradient-to-r from-emerald-500/15 via-transparent to-violet-500/15 blur-2xl opacity-60" />
-              <CodeBlock label="package.json" code={`- ${heroDiff.before}   # ${heroDiff.beforeUrl}\n+ ${heroDiff.after}   # ${heroDiff.afterUrl}`} className="relative" />
-              <div className="mt-3 flex items-center gap-2 text-xs text-zinc-500">
-                <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 font-mono text-[11px] text-zinc-400"><span className="size-1.5 rounded-full bg-red-400"></span> before</span>
-                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 font-mono text-[11px] text-emerald-400"><span className="size-1.5 rounded-full bg-emerald-400"></span> after</span>
-                <span className="ml-auto hidden sm:inline text-zinc-600">一行替换，告别端口记忆</span>
+        {/* Symmetrical Height Dual-Pane Demo */}
+        <div className="mx-auto mt-12 grid max-w-5xl items-stretch gap-5 lg:grid-cols-12">
+          {/* Left Pane: package.json diff + URL upgrade */}
+          <div className="relative flex min-w-0 flex-col lg:col-span-6">
+            <div className="pointer-events-none absolute -inset-3 rounded-[22px] bg-gradient-to-r from-emerald-500/15 via-transparent to-violet-500/15 opacity-60 blur-2xl" />
+            <div className="relative flex h-full flex-col overflow-hidden rounded-[16px] border border-white/10 bg-[#0e0e10] shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+              {/* Window Top Bar */}
+              <div className="flex h-10 items-center justify-between border-b border-white/[0.06] bg-white/[0.025] px-4">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1.5">
+                    <span className="size-2.5 rounded-full bg-[#ff5f56]/90 border border-black/15" />
+                    <span className="size-2.5 rounded-full bg-[#ffbd2e]/90 border border-black/15" />
+                    <span className="size-2.5 rounded-full bg-[#27c93f]/90 border border-black/15" />
+                  </div>
+                  <span className="ml-1.5 font-mono text-[11.5px] font-medium tracking-wide text-zinc-300">
+                    package.json
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCopyDiff}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-zinc-400 transition hover:border-white/20 hover:bg-white/[0.08] hover:text-white cursor-pointer"
+                  aria-label="复制 dev 脚本配置"
+                >
+                  {diffCopied ? (
+                    <>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5">
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-emerald-400">已复制</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                        <rect x="9" y="9" width="13" height="13" rx="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v3" />
+                      </svg>
+                      复制配置
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Diff Code Body */}
+              <div className="flex flex-1 flex-col justify-between p-4">
+                <div className="overflow-x-auto font-mono text-[12px] leading-6 sm:text-[12.5px]">
+                  <div className="px-2 text-zinc-600 select-none">{"\"scripts\": {"}</div>
+                  <div className="flex items-center justify-between gap-2 rounded-md border-l-2 border-rose-400/70 bg-rose-500/[0.06] px-2.5 py-1">
+                    <div className="whitespace-pre">
+                      <span className="font-semibold text-rose-400 select-none">- </span>
+                      <span className="text-rose-200/75">{heroDiff.before}</span>
+                    </div>
+                    <span className="hidden shrink-0 font-mono text-[11px] text-rose-300/45 line-through decoration-rose-400/40 sm:inline">
+                      # {heroDiff.beforeUrl}
+                    </span>
+                  </div>
+                  <div className="mt-1 flex items-center justify-between gap-2 rounded-md border-l-2 border-emerald-400/80 bg-emerald-500/[0.08] px-2.5 py-1">
+                    <div className="whitespace-pre">
+                      <span className="font-semibold text-emerald-400 select-none">+ </span>
+                      <span className="font-medium text-zinc-200">"dev"</span>
+                      <span className="text-zinc-400">: </span>
+                      <span className="text-emerald-300">"portless run next dev"</span>
+                    </div>
+                    <span className="hidden shrink-0 font-mono text-[11px] text-emerald-300 underline decoration-emerald-400/35 underline-offset-2 sm:inline">
+                      # {heroDiff.afterUrl}
+                    </span>
+                  </div>
+                  <div className="px-2 text-zinc-600 select-none">{"}"}</div>
+                </div>
+
+                {/* Address Bar Comparison Strip */}
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-[11.5px]">
+                  <div className="flex items-center gap-2 font-mono text-zinc-500">
+                    <span className="inline-flex items-center gap-1 rounded-md border border-rose-500/20 bg-rose-500/10 px-1.5 py-0.5 text-[10px] text-rose-300">
+                      before
+                    </span>
+                    <span className="line-through decoration-zinc-600">{heroDiff.beforeUrl}</span>
+                  </div>
+                  <div className="flex items-center gap-2 font-mono text-emerald-300">
+                    <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/25 bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300">
+                      after
+                    </span>
+                    <span className="inline-flex items-center gap-1 font-medium text-white">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.4">
+                        <rect x="4" y="11" width="16" height="10" rx="2" />
+                        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                      </svg>
+                      {heroDiff.afterUrl}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card Footer */}
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.06] bg-white/[0.02] px-4 py-2 text-[11px] text-zinc-500">
+                <span>一行替换，告别端口冲突与记忆负担</span>
+                <span className="font-mono text-zinc-400">或直接运行裸 portless</span>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-2">
-            <div className="relative overflow-hidden rounded-[16px] border border-white/10 bg-[#0e0e10] shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
-              <div className="flex items-center gap-2 border-b border-white/5 bg-white/[0.02] px-4 py-2.5">
-                <div className="flex gap-1.5"><span className="size-3 rounded-full bg-[#ff5f56]"></span><span className="size-3 rounded-full bg-[#ffbd2e]"></span><span className="size-3 rounded-full bg-[#27c93f]"></span></div>
-                <span className="ml-2 text-[11px] font-mono tracking-widest uppercase text-white/30">terminal — zsh</span>
-                <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-1 text-[10px] font-medium text-emerald-400 border border-emerald-500/20"><span className="size-1.5 rounded-full bg-emerald-400 animate-pulse-dot"></span> live</span>
+          {/* Right Pane: Live Terminal */}
+          <div className="flex min-w-0 flex-col lg:col-span-6">
+            <div className="relative flex h-full flex-col overflow-hidden rounded-[16px] border border-white/10 bg-[#0e0e10] shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+              {/* Window Top Bar */}
+              <div className="flex h-10 items-center gap-2 border-b border-white/[0.06] bg-white/[0.025] px-4">
+                <div className="flex gap-1.5">
+                  <span className="size-2.5 rounded-full bg-[#ff5f56]/90 border border-black/15" />
+                  <span className="size-2.5 rounded-full bg-[#ffbd2e]/90 border border-black/15" />
+                  <span className="size-2.5 rounded-full bg-[#27c93f]/90 border border-black/15" />
+                </div>
+                <span className="ml-1.5 font-mono text-[11px] tracking-widest uppercase text-white/40">
+                  terminal — zsh
+                </span>
+                <div className="ml-auto flex items-center gap-1.5">
+                  {typing.done && (
+                    <button
+                      type="button"
+                      onClick={typing.replay}
+                      className="rounded-md border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] font-medium text-zinc-400 transition hover:border-white/20 hover:text-white cursor-pointer"
+                      aria-label="重播终端输出动画"
+                    >
+                      重播
+                    </button>
+                  )}
+                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-400">
+                    <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
+                    live
+                  </span>
+                </div>
               </div>
-              <pre className="p-4 text-[12.5px] leading-6 font-mono whitespace-pre-wrap min-h-[148px]">
+
+              {/* Terminal Output Body */}
+              <pre className="flex-1 overflow-x-auto p-4 font-mono text-[12px] leading-7 whitespace-pre-wrap sm:text-[12.5px] sm:whitespace-pre min-h-[164px]">
                 <code>
-                  {typing.out.split("\n").map((line, i) => {
-                    const isSuccess = line.includes("✓") || line.includes("→");
+                  {lines.map((line, i) => {
+                    const isReady = line.startsWith("→");
+                    const isSuccess = line.startsWith("✓");
                     const isCmd = line.startsWith("$");
                     return (
-                      <div key={i} className={isCmd ? "text-zinc-100" : isSuccess ? "text-emerald-300" : "text-zinc-400"}>
+                      <div
+                        key={i}
+                        className={
+                          isCmd
+                            ? "font-medium text-zinc-100"
+                            : isReady
+                              ? "mt-1 font-semibold text-emerald-300"
+                              : isSuccess
+                                ? "text-emerald-300/90"
+                                : "text-zinc-400"
+                        }
+                      >
                         {line}
-                        {i === typing.out.split("\n").length - 1 && !typing.done && <span className="ml-0.5 inline-block h-4 w-2 translate-y-0.5 bg-white/80 animate-pulse" />}
+                        {i === lines.length - 1 && !typing.done && (
+                          <span className="ml-0.5 inline-block h-4 w-2 translate-y-0.5 bg-white/80 animate-pulse" />
+                        )}
                       </div>
                     );
                   })}
                 </code>
               </pre>
-              <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+              {/* Card Footer */}
+              <div className="flex items-center justify-between border-t border-white/[0.06] bg-white/[0.02] px-4 py-2 text-[11px] text-zinc-500">
+                <span>自动生成本地 CA · 自动绑定 443</span>
+                <span className="font-mono text-emerald-400/90 tabular-nums">PORT=4123</span>
+              </div>
             </div>
-            <p className="mt-2.5 text-center text-[11px] text-zinc-500">自动生成本地 CA · 自动绑定 443 · 自动注入 PORT</p>
           </div>
         </div>
 
-        {/* architecture - enhanced SVG */}
-        <div className="mx-auto mt-10 max-w-5xl">
+        {/* Architecture Diagram */}
+        <div className="mx-auto mt-8 max-w-5xl">
           <ArchitectureDiagram />
         </div>
       </div>

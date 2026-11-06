@@ -1,88 +1,199 @@
+const routes = [
+  {
+    host: "myapp.localhost",
+    tag: "主应用",
+    port: ":4123",
+    cmd: "next dev",
+    tone: "emerald" as const,
+  },
+  {
+    host: "api.myapp.localhost",
+    tag: "子域名",
+    port: ":4567",
+    cmd: "pnpm start",
+    tone: "violet" as const,
+  },
+  {
+    host: "fix-ui.myapp.localhost",
+    tag: "worktree",
+    port: ":4812",
+    cmd: "vite",
+    tone: "emerald" as const,
+  },
+];
+
 export function ArchitectureDiagram() {
   return (
-    <div className="relative overflow-hidden rounded-[20px] border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur p-6 sm:p-7">
-      <div className="absolute inset-0 grid-bg opacity-[0.25] [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)]" />
-      <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-[600px] rounded-full bg-emerald-500/10 blur-3xl" />
-      <p className="relative text-center text-[11px] font-medium tracking-[0.18em] uppercase text-white/30">工作原理 — 单一代理，多应用路由</p>
+    <div className="@container relative overflow-hidden rounded-[20px] border border-white/[0.08] bg-gradient-to-b from-white/[0.045] to-white/[0.015] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.4),0_16px_40px_-8px_rgba(0,0,0,0.45)] backdrop-blur sm:p-6">
+      <div className="pointer-events-none absolute inset-0 grid-bg opacity-[0.22] [mask-image:radial-gradient(ellipse_at_center,black_35%,transparent_85%)]" />
+      <div className="pointer-events-none absolute -top-24 left-1/2 h-44 w-[560px] -translate-x-1/2 rounded-full bg-emerald-500/[0.09] blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 right-1/4 h-40 w-[420px] rounded-full bg-violet-500/[0.08] blur-3xl" />
 
-      <div className="relative mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-0">
-        <div className="flex flex-col items-center gap-2.5">
-          <div className="relative flex size-[72px] items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
-            <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
-              <rect x="3" y="6" width="26" height="20" rx="5" fill="white" fillOpacity="0.08" stroke="white" strokeOpacity="0.12" />
-              <rect x="3" y="6" width="26" height="7" rx="5" fill="white" fillOpacity="0.06" />
-              <circle cx="8" cy="9.5" r="1.3" fill="white" fillOpacity="0.85" />
-              <circle cx="11.5" cy="9.5" r="1.3" fill="white" fillOpacity="0.55" />
-              <circle cx="15" cy="9.5" r="1.3" fill="white" fillOpacity="0.25" />
-              <path d="M11 18.5l2.2 2.2 4-4" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+      {/* Header */}
+      <div className="relative flex flex-wrap items-center justify-between gap-2 border-b border-white/[0.06] pb-4">
+        <div className="flex items-center gap-2.5">
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold tracking-wider uppercase text-emerald-300">
+            <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
+            工作原理
+          </span>
+          <span className="text-[12.5px] font-medium text-zinc-300">
+            单一代理监听 443，按 Host 头把具名域名转发至本机临时端口
+          </span>
+        </div>
+        <span className="hidden font-mono text-[11px] text-zinc-500 @xl:inline">
+          ~/.portless/routes.json
+        </span>
+      </div>
+
+      {/* Main 3-stage pipeline */}
+      <div className="relative mt-5 grid items-center gap-2 @2xl:grid-cols-[minmax(0,1.35fr)_20px_126px_20px_minmax(0,0.88fr)] @4xl:gap-3 @4xl:grid-cols-[minmax(0,1fr)_56px_172px_56px_minmax(0,1fr)]">
+        {/* Stage 1: Browser / Agent requests */}
+        <div className="min-w-0 rounded-2xl border border-white/[0.07] bg-[#0c0c0e]/90 p-2.5 @4xl:p-3.5 shadow-inner">
+          <div className="mb-2.5 flex items-center justify-between px-1">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-400">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-zinc-400">
+                <rect x="3" y="4" width="18" height="16" rx="3" />
+                <path d="M3 9h18" />
+              </svg>
+              浏览器 / Agent 请求
+            </span>
+            <span className="font-mono text-[10px] tracking-wider uppercase text-emerald-400/80">HTTPS</span>
           </div>
-          <span className="rounded-full bg-white text-black px-2.5 py-1 font-mono text-[11px] font-semibold">myapp.localhost</span>
-          <span className="text-[11px] text-zinc-500">浏览器</span>
+          <div className="space-y-1.5">
+            {routes.map((r) => (
+              <div
+                key={r.host}
+                className="flex items-center justify-between gap-1.5 rounded-xl border border-white/[0.06] bg-white/[0.03] px-2 py-2 transition hover:border-white/[0.12] hover:bg-white/[0.05] @4xl:gap-2 @4xl:px-2.5"
+              >
+                <div className="flex min-w-0 items-center gap-1.5 @4xl:gap-2">
+                  <svg
+                    width="11"
+                    height="11"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    className={r.tone === "emerald" ? "shrink-0 text-emerald-400" : "shrink-0 text-violet-400"}
+                  >
+                    <rect x="4" y="11" width="16" height="10" rx="2" />
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                  </svg>
+                  <span className="truncate font-mono text-[11px] @4xl:text-[11.5px] font-medium text-zinc-100">
+                    {r.host}
+                  </span>
+                </div>
+                <span
+                  className={`shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-medium ${
+                    r.tone === "emerald"
+                      ? "bg-emerald-500/10 text-emerald-300/90 border border-emerald-500/20"
+                      : "bg-violet-500/10 text-violet-300/90 border border-violet-500/20"
+                  }`}
+                >
+                  {r.tag}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="flex sm:w-[88px] items-center justify-center py-2 sm:py-0">
-          <div className="hidden sm:flex items-center w-full">
-            <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-emerald-500/50"></div>
-            <div className="mx-1 size-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(34,197,94,0.8)] animate-pulse-dot"></div>
-            <div className="h-px flex-1 bg-gradient-to-r from-emerald-500/50 to-white/10"></div>
+        {/* Connector 1: Client -> Proxy */}
+        <div className="flex items-center justify-center py-0.5 @2xl:py-0">
+          <div className="relative hidden h-5 w-full items-center @2xl:flex">
+            <div className="h-px w-full bg-gradient-to-r from-white/10 via-emerald-500/45 to-emerald-400/70" />
+            <div className="pointer-events-none absolute inset-x-0 h-[2px] overflow-hidden">
+              <div className="h-full w-1/2 bg-gradient-to-r from-transparent via-emerald-300 to-transparent animate-flow-emerald" />
+            </div>
+            <div className="absolute left-1/2 -translate-x-1/2 size-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(34,197,94,0.9)]" />
           </div>
-          <svg className="sm:hidden text-white/20 rotate-90" width="20" height="28" viewBox="0 0 20 28" fill="none" stroke="currentColor" strokeWidth="1.3">
-            <path d="M10 0v24M4 18l6 6 6-6" />
+          <svg className="text-emerald-400/50 @2xl:hidden" width="18" height="22" viewBox="0 0 18 22" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M9 1v18M4 14l5 5 5-5" />
           </svg>
         </div>
 
-        <div className="flex flex-col items-center gap-2.5">
-          <div className="relative flex size-[72px] items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-[0_8px_24px_rgba(34,197,94,0.35)] border border-white/15">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-              <path d="M12 3l7 3.5v4.7c0 3.6-2.1 5.9-7 7.8-4.9-1.9-7-4.2-7-7.8V6.5L12 3z" fill="white" fillOpacity="0.14" stroke="white" strokeWidth="1.7" />
-              <path d="M9.2 12.2l1.8 1.8 3.8-3.8" stroke="white" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Stage 2: Portless Proxy Hub */}
+        <div className="relative flex flex-col items-center justify-center rounded-2xl border border-emerald-500/25 bg-gradient-to-b from-emerald-500/[0.12] to-[#0e0e11] px-2.5 py-4 text-center shadow-[0_8px_30px_-4px_rgba(34,197,94,0.18)]">
+          <div className="relative flex size-13 @4xl:size-14 items-center justify-center rounded-2xl border border-white/20 bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-[0_6px_20px_rgba(34,197,94,0.4)]">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 3l7 3.5v4.7c0 3.6-2.1 5.9-7 7.8-4.9-1.9-7-4.2-7-7.8V6.5L12 3z"
+                fill="white"
+                fillOpacity="0.16"
+                stroke="white"
+                strokeWidth="1.75"
+              />
+              <path d="M9.2 12.2l1.8 1.8 3.8-3.8" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span className="absolute -bottom-1 rounded-full bg-black text-white px-2 py-0.5 text-[10px] font-mono font-medium border border-white/10">:443</span>
+            <span className="absolute -bottom-2 rounded-full border border-emerald-400/30 bg-[#09090b] px-2 py-0.5 font-mono text-[10px] font-semibold text-emerald-300 shadow">
+              :443
+            </span>
           </div>
-          <span className="font-mono text-[11px] font-semibold text-emerald-400">portless proxy</span>
-          <span className="text-[11px] text-zinc-500">HTTPS · HTTP/2</span>
+          <div className="mt-3.5 font-mono text-[11.5px] @4xl:text-[12px] font-semibold text-white">portless proxy</div>
+          <div className="mt-0.5 text-[10.5px] @4xl:text-[11px] text-emerald-300/80">HTTPS · HTTP/2</div>
+          <div className="mt-2 rounded-lg border border-white/[0.06] bg-black/40 px-2 py-1 font-mono text-[10px] text-zinc-400">
+            Host 匹配路由表
+          </div>
         </div>
 
-        <div className="flex sm:w-[88px] items-center justify-center py-2 sm:py-0">
-          <div className="hidden sm:flex items-center w-full">
-            <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-violet-500/50"></div>
-            <div className="mx-1 size-2 rounded-full bg-violet-400 shadow-[0_0_8px_rgba(139,92,246,0.8)] animate-pulse-dot"></div>
-            <div className="h-px flex-1 bg-gradient-to-r from-violet-500/50 to-white/10"></div>
+        {/* Connector 2: Proxy -> Local servers */}
+        <div className="flex items-center justify-center py-0.5 @2xl:py-0">
+          <div className="relative hidden h-5 w-full items-center @2xl:flex">
+            <div className="h-px w-full bg-gradient-to-r from-violet-400/70 via-violet-500/45 to-white/10" />
+            <div className="pointer-events-none absolute inset-x-0 h-[2px] overflow-hidden">
+              <div className="h-full w-1/2 bg-gradient-to-r from-transparent via-violet-300 to-transparent animate-flow-violet" />
+            </div>
+            <div className="absolute left-1/2 -translate-x-1/2 size-2 rounded-full bg-violet-400 shadow-[0_0_10px_rgba(139,92,246,0.9)]" />
           </div>
-          <svg className="sm:hidden text-white/20 rotate-90" width="20" height="28" viewBox="0 0 20 28" fill="none" stroke="currentColor" strokeWidth="1.3">
-            <path d="M10 0v24M4 18l6 6 6-6" />
+          <svg className="text-violet-400/50 @2xl:hidden" width="18" height="22" viewBox="0 0 18 22" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M9 1v18M4 14l5 5 5-5" />
           </svg>
         </div>
 
-        <div className="flex flex-col items-center gap-2.5">
-          <div className="flex gap-2.5">
-            <div className="flex size-[72px] flex-col items-center justify-center gap-1 rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeOpacity="0.9" strokeWidth="1.6">
-                <rect x="4" y="4" width="16" height="12" rx="2" />
-                <path d="M4 9h16M8 16v-3M12 16v-3M16 16v-3" />
+        {/* Stage 3: Local App Processes */}
+        <div className="min-w-0 rounded-2xl border border-white/[0.07] bg-[#0c0c0e]/90 p-3 @4xl:p-3.5 shadow-inner">
+          <div className="mb-2.5 flex items-center justify-between px-1">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-400">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-zinc-400">
+                <rect x="4" y="4" width="16" height="16" rx="3" />
+                <path d="M8 10l2.5 2L8 14M12.5 14H16" />
               </svg>
-              <span className="font-mono text-[10px] text-zinc-300">:4123</span>
-              <span className="text-[10px] leading-none text-zinc-500">myapp</span>
-            </div>
-            <div className="flex size-[72px] flex-col items-center justify-center gap-1 rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeOpacity="0.9" strokeWidth="1.6">
-                <rect x="5" y="4" width="14" height="14" rx="2" />
-                <circle cx="12" cy="11" r="3" />
-                <path d="M8 18l2-2M16 18l-2-2" />
-              </svg>
-              <span className="font-mono text-[10px] text-zinc-300">:4567</span>
-              <span className="text-[10px] leading-none text-zinc-500">api</span>
-            </div>
+              本地应用进程
+            </span>
+            <span className="font-mono text-[10px] text-zinc-500 tabular-nums">4000–4999</span>
           </div>
-          <span className="text-[11px] text-zinc-500">本地应用 · 自动分配端口</span>
+          <div className="space-y-1.5">
+            {routes.map((r) => (
+              <div
+                key={r.port}
+                className="flex items-center justify-between gap-2 rounded-xl border border-white/[0.06] bg-white/[0.03] px-2.5 py-2 transition hover:border-white/[0.12] hover:bg-white/[0.05]"
+              >
+                <span className="inline-flex shrink-0 items-center rounded-md border border-white/10 bg-white/[0.06] px-1.5 py-0.5 font-mono text-[11px] font-semibold text-white tabular-nums">
+                  <span className="hidden @4xl:inline">127.0.0.1</span>
+                  {r.port}
+                </span>
+                <span className="truncate font-mono text-[11px] text-zinc-400">{r.cmd}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="relative mt-6 flex flex-wrap justify-center gap-2 text-[11px]">
-        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-zinc-400">127.0.0.1 + ::1 仅回环</span>
-        <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-emerald-300">自动复用上次代理配置</span>
-        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-zinc-400">WebSocket · HMR 透传</span>
+      {/* Footer capabilities */}
+      <div className="relative mt-4 flex flex-wrap items-center justify-center gap-2 pt-1 text-[11px]">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-zinc-400">
+          <span className="size-1.5 rounded-full bg-zinc-400" />
+          127.0.0.1 + ::1 仅回环绑定
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/[0.08] px-3 py-1 text-emerald-300">
+          <span className="size-1.5 rounded-full bg-emerald-400" />
+          自动复用上次代理配置
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/[0.08] px-3 py-1 text-violet-300">
+          <span className="size-1.5 rounded-full bg-violet-400" />
+          WebSocket · HMR 透传
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-zinc-400">
+          进程停止自动移除路由
+        </span>
       </div>
     </div>
   );

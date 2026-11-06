@@ -1,20 +1,61 @@
+import { useId } from "react";
+
 export function LogoSvg({ size = 36 }: { size?: number }) {
+  const uid = useId();
+  const bgId = `${uid}-bg`;
+  const glowId = `${uid}-glow`;
+  const rimId = `${uid}-rim`;
+  const topId = `${uid}-top`;
+  const botId = `${uid}-bot`;
+
   return (
-    <svg width={size} height={size} viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-      <rect width="36" height="36" rx="10" fill="url(#navG)" />
-      <rect width="36" height="36" rx="10" fill="url(#navH)" />
-      <path d="M10.7 26.5V17.5a7.3 7.3 0 0 1 14.6 0v9" stroke="white" strokeWidth="3.8" strokeLinecap="round" fill="none" />
-      <path d="M7.3 26.5h21.4" stroke="white" strokeOpacity="0.5" strokeWidth="2.4" strokeLinecap="round" />
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
       <defs>
-        <linearGradient id="navG" x1="4" y1="4" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#22c55e" />
-          <stop offset="1" stopColor="#16a34a" />
+        <linearGradient id={bgId} x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#122b1f" />
+          <stop offset="0.48" stopColor="#09140f" />
+          <stop offset="1" stopColor="#07070b" />
         </linearGradient>
-        <linearGradient id="navH" x1="0" y1="0" x2="36" y2="18" gradientUnits="userSpaceOnUse">
-          <stop stopColor="white" stopOpacity="0.18" />
-          <stop offset="1" stopColor="white" stopOpacity="0" />
+        <radialGradient
+          id={glowId}
+          cx="0"
+          cy="0"
+          r="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="translate(22 23) rotate(-45) scale(19)"
+        >
+          <stop stopColor="#22c55e" stopOpacity="0.34" />
+          <stop offset="0.65" stopColor="#8b5cf6" stopOpacity="0.14" />
+          <stop offset="1" stopColor="#000000" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id={rimId} x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#4ade80" stopOpacity="0.62" />
+          <stop offset="0.45" stopColor="#ffffff" stopOpacity="0.12" />
+          <stop offset="1" stopColor="#a78bfa" stopOpacity="0.42" />
+        </linearGradient>
+        <linearGradient id={topId} x1="8" y1="6.5" x2="23" y2="15" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset="1" stopColor="#e4e4e7" />
+        </linearGradient>
+        <linearGradient id={botId} x1="8" y1="12" x2="24" y2="25.5" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#86efac" />
+          <stop offset="0.45" stopColor="#4ade80" />
+          <stop offset="1" stopColor="#10b981" />
         </linearGradient>
       </defs>
+      <rect width="32" height="32" rx="8" fill={`url(#${bgId})`} />
+      <rect width="32" height="32" rx="8" fill={`url(#${glowId})`} />
+      <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke={`url(#${rimId})`} strokeWidth="1" />
+      <path
+        d="M8 15.1V9.2A2.6 2.6 0 0 1 10.6 6.6H17.4A6.4 6.4 0 0 1 23.31 10.51L19.07 11.78A2.4 2.4 0 0 0 17.0 10.6H12.4V13.78L8 15.1Z"
+        fill={`url(#${topId})`}
+      />
+      <path
+        transform="translate(0.55 -0.16)"
+        d="M8 16.7L12.4 15.38V15.4H17.0A2.4 2.4 0 0 0 19.38 13.29L23.72 11.98A6.4 6.4 0 0 1 17.4 19.4H12.4V23.4A2.0 2.0 0 0 1 10.4 25.4H10.0A2.0 2.0 0 0 1 8 23.4V16.7Z"
+        fill={`url(#${botId})`}
+      />
+      <circle cx="21.0" cy="23.2" r="2.2" fill={`url(#${botId})`} />
     </svg>
   );
 }

@@ -1,18 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="portless">
   <defs>
-    <linearGradient id="g" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#22c55e"/>
-      <stop offset="1" stop-color="#16a34a"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#122b1f"/>
+      <stop offset="0.48" stop-color="#09140f"/>
+      <stop offset="1" stop-color="#07070b"/>
     </linearGradient>
-    <linearGradient id="gh" x1="0" y1="0" x2="32" y2="16" gradientUnits="userSpaceOnUse">
-      <stop stop-color="white" stop-opacity="0.22"/>
-      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(22 23) rotate(-45) scale(19)">
+      <stop stop-color="#22c55e" stop-opacity="0.34"/>
+      <stop offset="0.65" stop-color="#8b5cf6" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4ade80" stop-opacity="0.62"/>
+      <stop offset="0.45" stop-color="#ffffff" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#a78bfa" stop-opacity="0.42"/>
+    </linearGradient>
+    <linearGradient id="p-top" x1="8" y1="6.5" x2="23" y2="15" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e4e4e7"/>
+    </linearGradient>
+    <linearGradient id="p-bot" x1="8" y1="12" x2="24" y2="25.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#86efac"/>
+      <stop offset="0.45" stop-color="#4ade80"/>
+      <stop offset="1" stop-color="#10b981"/>
     </linearGradient>
   </defs>
-  <!-- outer with subtle stroke for dark-mode tab visibility -->
-  <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" fill="url(#g)" stroke="white" stroke-opacity="0.14"/>
-  <rect width="32" height="32" rx="8" fill="url(#gh)"/>
-  <!-- tunnel/gateway mark - no port, just routing -->
-  <path d="M9.5 23.5V15.5a6.5 6.5 0 0 1 13 0v8" stroke="white" stroke-width="3.4" stroke-linecap="round" fill="none"/>
-  <path d="M6.5 23.5h19" stroke="white" stroke-opacity="0.5" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- Full-bleed obsidian-emerald jewel squircle with inset aurora rim -->
+  <rect width="32" height="32" rx="8" fill="url(#bg)"/>
+  <rect width="32" height="32" rx="8" fill="url(#glow)"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="url(#rim)" stroke-width="1"/>
+
+  <!-- Upper-Left White Stream of Prism-Cut P -->
+  <path
+    d="M8 15.1V9.2A2.6 2.6 0 0 1 10.6 6.6H17.4A6.4 6.4 0 0 1 23.31 10.51L19.07 11.78A2.4 2.4 0 0 0 17.0 10.6H12.4V13.78L8 15.1Z"
+    fill="url(#p-top)"
+  />
+
+  <!-- Lower-Right Refracted Emerald Stream of Prism-Cut P -->
+  <path
+    transform="translate(0.55 -0.16)"
+    d="M8 16.7L12.4 15.38V15.4H17.0A2.4 2.4 0 0 0 19.38 13.29L23.72 11.98A6.4 6.4 0 0 1 17.4 19.4H12.4V23.4A2.0 2.0 0 0 1 10.4 25.4H10.0A2.0 2.0 0 0 1 8 23.4V16.7Z"
+    fill="url(#p-bot)"
+  />
+
+  <!-- .localhost Routing Node -->
+  <circle cx="21.0" cy="23.2" r="2.2" fill="url(#p-bot)"/>
 </svg>

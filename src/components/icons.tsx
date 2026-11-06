@@ -212,18 +212,39 @@ export function IconContainer(props: IconProps) {
   );
 }
 
-// Logo mark (for navbar/footer) - crisp P
+// Logo mark (for navbar/footer) - Prism-Cut P.
 export function LogoMark({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-      <rect width="32" height="32" rx="9" fill="url(#logoG)" />
       <defs>
-        <linearGradient id="logoG" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#22c55e" />
-          <stop offset="1" stopColor="#16a34a" />
+        <linearGradient id="logoBg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#122b1f" />
+          <stop offset="0.48" stopColor="#09140f" />
+          <stop offset="1" stopColor="#07070b" />
+        </linearGradient>
+        <linearGradient id="logoRim" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#4ade80" stopOpacity="0.62" />
+          <stop offset="0.45" stopColor="#ffffff" stopOpacity="0.12" />
+          <stop offset="1" stopColor="#a78bfa" stopOpacity="0.42" />
+        </linearGradient>
+        <linearGradient id="logoBot" x1="8" y1="12" x2="24" y2="25.5" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#86efac" />
+          <stop offset="0.45" stopColor="#4ade80" />
+          <stop offset="1" stopColor="#10b981" />
         </linearGradient>
       </defs>
-      <path d="M10.2 22V9.8h5.1c1.55 0 2.78.42 3.68 1.26.9.84 1.35 1.98 1.35 3.42 0 1.44-.45 2.58-1.35 3.42-.9.84-2.13 1.26-3.68 1.26h-2.4V22h-2.7zm2.7-5.05h1.9c.7 0 1.23-.17 1.6-.52.37-.35.55-.84.55-1.48 0-.64-.18-1.13-.55-1.48-.37-.35-.9-.52-1.6-.52h-1.9v4z" fill="white" />
+      <rect width="32" height="32" rx="8" fill="url(#logoBg)" />
+      <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="url(#logoRim)" strokeWidth="1" />
+      <path
+        d="M8 15.1V9.2A2.6 2.6 0 0 1 10.6 6.6H17.4A6.4 6.4 0 0 1 23.31 10.51L19.07 11.78A2.4 2.4 0 0 0 17.0 10.6H12.4V13.78L8 15.1Z"
+        fill="#ffffff"
+      />
+      <path
+        transform="translate(0.55 -0.16)"
+        d="M8 16.7L12.4 15.38V15.4H17.0A2.4 2.4 0 0 0 19.38 13.29L23.72 11.98A6.4 6.4 0 0 1 17.4 19.4H12.4V23.4A2.0 2.0 0 0 1 10.4 25.4H10.0A2.0 2.0 0 0 1 8 23.4V16.7Z"
+        fill="url(#logoBot)"
+      />
+      <circle cx="21.0" cy="23.2" r="2.2" fill="url(#logoBot)" />
     </svg>
   );
 }

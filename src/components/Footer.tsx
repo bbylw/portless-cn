@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { upstreamVersion } from "../data";
+import { LogoSvg } from "./LogoSvg";
 
 export function Footer() {
   return (
@@ -10,7 +11,7 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-3 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
             <div className="flex items-center gap-3">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="9" fill="url(#fg)"/><rect width="32" height="32" rx="9" fill="url(#fh)"/><path d="M9.5 23.5V15.5a6.5 6.5 0 0 1 13 0v8" stroke="white" strokeWidth="3.4" strokeLinecap="round" fill="none"/><path d="M6.5 23.5h19" stroke="white" strokeOpacity="0.5" strokeWidth="2.2" strokeLinecap="round"/><defs><linearGradient id="fg" x1="4" y1="4" x2="28" y2="28"><stop stopColor="#22c55e"/><stop offset="1" stopColor="#16a34a"/></linearGradient><linearGradient id="fh" x1="0" y1="0" x2="32" y2="16"><stop stopColor="white" stopOpacity="0.18"/><stop offset="1" stopColor="white" stopOpacity="0"/></linearGradient></defs></svg>
+              <LogoSvg size={32} />
               <span className="font-semibold tracking-tight">portless</span>
               <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-medium tracking-wider text-emerald-300">v{upstreamVersion}</span>
               <span className="rounded-full bg-white/5 border border-white/10 px-2 py-0.5 text-[10px] font-medium tracking-widest uppercase text-zinc-400">pre-1.0</span>
