@@ -102,6 +102,11 @@ export function Proxy() {
           code={`{\n  "error": "bad_gateway",\n  "upstream": "myapp.localhost",\n  "message": "..."\n}`}
         />
         <DocP>来自你自己应用的响应会原样转发。portless TLD 之外的主机名（例如被 DNS 屏蔽列表指向 127.0.0.1 的站点）会得到 421 Misdirected Request，而不是应用列表。</DocP>
+        <DocP>
+          代理会并行连接 IPv4 与 IPv6 回环，并采用第一个成功的连接，不会用计时器放弃任一协议族。同时监听两个协议族的后端可能多接受一条未发送 HTTP
+          请求便关闭的连接；后续请求会尽可能复用胜出的连接。遇到上游 502 错误时，先用 <InlineCode>portless proxy stop</InlineCode>{" "}
+          停止代理，再运行 <InlineCode>portless proxy start --foreground</InlineCode>，即可看到每个失败的回环地址及其错误码。
+        </DocP>
       </DocSection>
     </div>
   );

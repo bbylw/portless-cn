@@ -90,6 +90,36 @@ export function CommandReference() {
         </p>
       </DocSection>
 
+      <DocSection id="alias" title="别名与上游">
+        <DocP>
+          为不由 portless 管理的服务（例如 Docker 容器）注册静态路由。别名会在过期路由清理中持久保留。
+        </DocP>
+        <CodeBlock
+          code={`portless alias my-postgres 5432                         # -> https://my-postgres.localhost\nportless alias redis 6379                               # -> https://redis.localhost\nportless alias redis 6379 --tld test                    # 仅在 https://redis.test 上\nportless alias api 8080 --upstream https://api.internal # TLS、Host 与 SNI 覆盖\nportless alias --remove my-postgres                     # 移除别名`}
+        />
+        <DocP>
+          默认情况下，别名覆盖所有已配置的 TLD。在别名参数后传入 <InlineCode>--tld</InlineCode>{" "}
+          <InlineCode>{"<tld>"}</InlineCode> 可仅覆盖选定的已配置 TLD；重复该标志或传入逗号分隔的列表，所选 TLD
+          会替换名称上已有的 TLD 后缀。值缺失、为空或未配置时，命令会在任何路由变更前停止。
+        </DocP>
+        <DocP>
+          位置参数 port 始终拨号回环。<InlineCode>--upstream https</InlineCode> 启用 TLS 并保留传入的 Host 头；
+          <InlineCode>https://</InlineCode> authority 启用 TLS 并用完整 authority（含可选端口）覆盖 Host，SNI
+          使用不含端口的 DNS 主机名（IP 地址不作为 SNI 发送）；<InlineCode>http://</InlineCode> authority
+          在不启用 TLS 的情况下覆盖 Host。此设置不改变面向客户端的代理 TLS。authority 只接受主机名或 IP
+          地址及可选端口，不接受凭据、路径、查询、片段或空白。
+        </DocP>
+        <Callout>
+          上游 TLS 仅连接回环上的 HTTP/1.1 后端；portless 会禁用证书校验，因此 TLS
+          不会验证后端身份（即使通过 SSH 隧道也是如此）。升级 portless 后请重启代理守护进程。
+        </Callout>
+        <DocP>
+          <InlineCode>portless alias --remove</InlineCode> 只移除并报告 PID 为 0 的路由（包括分离的 Compose
+          路由），运行中应用拥有的路由会被保留。<InlineCode>--force</InlineCode>
+          会停止冲突的应用（如果存在）并替换路由，因此该应用在其他 TLD 上的路由也可能消失。
+        </DocP>
+      </DocSection>
+
       <DocSection id="options" title="选项">
         {filteredOptions.length === 0 ? (
           <DocP>没有匹配的选项。</DocP>

@@ -1,5 +1,5 @@
 import { CodeBlock } from "../../components/CodeBlock";
-import { DocSection, DocP, InlineCode, Callout, DocTable } from "../../components/docs/DocPrimitives";
+import { DocSection, DocP, InlineCode, Callout, DocTable, ExtLink } from "../../components/docs/DocPrimitives";
 
 export function Mcp() {
   return (
@@ -46,6 +46,15 @@ export function Mcp() {
           label="mcp.json"
           code={`{ "mcpServers": { "portless": { "command": "portless", "args": ["mcp", "--tools", "all"] } } }`}
         />
+      </DocSection>
+
+      <DocSection id="agent-skill" title="Agent Skill">
+        <DocP>
+          除了 MCP 服务器，还可以从{" "}
+          <ExtLink href="https://skills.sh/vercel-labs/portless">skills.sh</ExtLink> 将 portless skill
+          安装到 Agent 环境，让它了解如何通过 portless 运行和查询本地服务：
+        </DocP>
+        <CodeBlock code={`npx skills add vercel-labs/portless`} />
       </DocSection>
 
       <DocSection id="limitations" title="限制">

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { CodeBlock } from "../../components/CodeBlock";
 import { DocSection, DocP, InlineCode, Callout } from "../../components/docs/DocPrimitives";
 
@@ -32,6 +33,21 @@ export function Routing() {
           使用 <InlineCode>--name</InlineCode> 可在保留 worktree 前缀的同时覆盖推断出的基础名称：
         </DocP>
         <CodeBlock code={`portless run --name myapp next dev   # -> https://fix-ui.myapp.localhost`} />
+        <DocP>
+          使用 <InlineCode>--prefix</InlineCode> <InlineCode>{"<label>"}</InlineCode>（或 <InlineCode>PORTLESS_PREFIX</InlineCode>
+          ）可自行设置标签，<InlineCode>""</InlineCode> 表示无标签。可在{" "}
+          <Link
+            to="/docs/configuration#worktree-hostnames"
+            className="text-emerald-300 underline decoration-emerald-500/40 underline-offset-2 transition hover:text-emerald-200 hover:decoration-emerald-400"
+          >
+            配置 · Worktree 主机名
+          </Link>{" "}
+          中更改标签风格（例如 <InlineCode>branch</InlineCode> 保留整个分支）或整个主机名模板。
+        </DocP>
+        <Callout tone="amber">
+          重复的被代理主机名会在任何应用启动前失败。启用 hostnameTemplate 时请包含 <InlineCode>{"{name}"}</InlineCode>{" "}
+          以区分不同应用。
+        </Callout>
         <DocP>
           将 <InlineCode>portless run</InlineCode> 写入一次 <InlineCode>package.json</InlineCode>
           ，即可在所有地方通用。主检出使用纯名称，每个 worktree 获得唯一的子域名。无冲突，无需 <InlineCode>--force</InlineCode>。

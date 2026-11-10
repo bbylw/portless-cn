@@ -7,6 +7,7 @@
   <a href="https://www.npmjs.com/package/portless"><img alt="npm version: portless" src="https://img.shields.io/npm/v/portless.svg?style=for-the-badge&amp;labelColor=000000" height="28"></a>
   <a href="https://github.com/vercel-labs/portless/blob/main/LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/github/license/vercel-labs/portless.svg?style=for-the-badge&amp;labelColor=000000" height="28"></a>
   <a href="https://www.npmjs.com/package/portless"><img alt="npm downloads per month: portless" src="https://img.shields.io/npm/dm/portless.svg?style=for-the-badge&amp;labelColor=000000&amp;label=npm%20downloads" height="28"></a>
+  <a href="https://skills.sh/vercel-labs/portless"><img alt="skills.sh" src="https://skills.sh/b/vercel-labs/portless?style=for-the-badge" height="28"></a>
 </p>
 
 ```diff
@@ -67,7 +68,7 @@ portless        # -> 运行 "dev" 脚本，https://<project>.localhost
 portless        # -> 运行 "dev" 脚本，https://myapp.localhost
 ```
 
-脚本默认为 `"dev"`。若配置中未设置名称，则从 `package.json` 推断。
+脚本默认为 `"dev"`。若配置中未设置名称，则从 `package.json` 推断。只有 `worktree` 选项会从 workspace 根目录继承到包目录；`name`、`script`、`appPort` 和 `proxy` 只作用于当前目录。
 
 ### Monorepo（多包仓库）
 
@@ -93,14 +94,25 @@ cd apps/web && portless   # 只启动单个包
 
 ### 配置字段
 
-| 字段      | 类型    | 默认值   | 说明                                                |
-| --------- | ------- | -------- | --------------------------------------------------- |
-| `name`    | string  | 推断     | 基础应用名。Git worktree 前缀仍然生效。             |
-| `script`  | string  | `"dev"`  | 要运行的 `package.json` 脚本名。                    |
-| `appPort` | number  | 自动     | 子进程的固定端口。                                  |
-| `proxy`   | boolean | 自动     | 是否经由代理路由。自动检测。                        |
-| `apps`    | object  |          | 工作区包的覆盖配置，以相对路径作为键。              |
-| `turbo`   | boolean | `true`   | 设为 `false` 以使用直接派生，而不是 turborepo。     |
+| 字段       | 类型    | 默认值   | 说明                                                                 |
+| ---------- | ------- | -------- | -------------------------------------------------------------------- |
+| `name`     | string  | 推断     | 基础应用名。Git worktree 前缀仍然生效。                              |
+| `script`   | string  | `"dev"`  | 要运行的 `package.json` 脚本名。                                     |
+| `appPort`  | number  | 自动     | 子进程的固定端口。                                                   |
+| `proxy`    | boolean | 自动     | 是否经由代理路由。自动检测。                                         |
+| `apps`     | object  |          | 工作区包的覆盖配置，以相对路径作为键。                               |
+| `worktree` | object  |          | Worktree 标签风格与主机名模板。根配置为每个应用的默认值；`apps` 条目按键覆盖。 |
+| `turbo`    | boolean | `true`   | 设为 `false` 以使用直接派生，而不是 turborepo。                      |
+
+每个 `apps` 条目的形状相同（`name`、`script`、`appPort`、`proxy`、`worktree`）。存在 `apps` 时，顶层字段仅在单应用模式下生效；`worktree` 例外，它为每个应用提供默认值，并可由 `apps` 条目按键覆盖。
+
+### Worktree 主机名
+
+在已链接的 worktree 中，`worktree.prefix` 选择标签风格：`last-segment`（默认）使用分支的最后一个 `/` 段，`branch` 保留整个分支，因此 `team-a/login` 会变成 `team-a-login`。`worktree.hostnameTemplate` 会替换整个主机名，且必须包含 `{worktree}`；可选的 `{name}` 表示基础名称，例如 `tenant.{worktree}-{name}`。模板在配置加载时校验，必须渲染为合法的 DNS 标签；超过 63 个字符的标签会在运行时用稳定哈希缩短，模板仅在存在标签时生效。`portless run --prefix` 或 `PORTLESS_PREFIX` 可直接设置标签，覆盖 `worktree.prefix`，并且在 worktree 之外也能使用；`""` 会移除标签。`--no-worktree` 跳过 worktree 配置与命名；不使用它时，当前目录或 workspace 中的无效配置会直接失败，而不是打印猜测的 URL。`portless get` 从当前目录读取 worktree 配置（包括 workspace 根目录默认值），而不是从所命名服务的包读取，因此请 `cd` 到对应包以使用其单应用选项。Worktree 选项会从 workspace 根目录继承到包目录；在根目录多应用启动时，包自己的 `portless.json` 会生效；对于 worktree 选项，仅当包没有 `portless.json` 时才使用 `package.json` 的 `"portless"` 键，而 `name`、`script`、`appPort` 和 `proxy` 保持现有优先级。重复的被代理主机名会在任何应用启动前失败。请使用唯一的应用名，或在启用 worktree 模板时包含 `{name}`。
+
+```json
+{ "worktree": { "prefix": "branch", "hostnameTemplate": "tenant.{worktree}-{name}" } }
+```
 
 ### package.json 的 "portless" 键
 
@@ -113,7 +125,7 @@ cd apps/web && portless   # 只启动单个包
 }
 ```
 
-对象形式支持所有单应用字段（`name`、`script`、`appPort`、`proxy`）：
+对象形式支持所有单应用字段（`name`、`script`、`appPort`、`proxy`、`worktree`）：
 
 ```json
 {
@@ -123,6 +135,15 @@ cd apps/web && portless   # 只启动单个包
 ```
 
 `package.json` 中的 `"portless"` 键优先于 `portless.json` 的应用条目，但会被 CLI 标志覆盖。
+
+### 配置优先级
+
+最接近的配置优先，类似 Prettier 与 ESLint：
+
+- `name`：CLI `--name` 标志 > `package.json` `"portless"` 键 > `portless.json` 应用条目 > `package.json` 推断。
+- `script`：CLI `--script` 标志 > `package.json` `"portless"` 键 > `portless.json` 应用条目 > 默认 `"dev"`。
+- `appPort`：CLI `--app-port` 标志 > `PORTLESS_APP_PORT` 环境变量 > `package.json` `"portless"` 键 > `portless.json` 应用条目 > 自动分配。
+- Worktree 标签：CLI `--prefix` 标志（`portless run`）> `PORTLESS_PREFIX` 环境变量 > 已链接 worktree 的分支。
 
 ### --script 标志
 
@@ -211,6 +232,8 @@ portless run next dev   # -> https://fix-ui.myapp.localhost
 portless run --name myapp next dev   # -> https://fix-ui.myapp.localhost
 ```
 
+使用 `--prefix <label>`（或 `PORTLESS_PREFIX`）可自行设置标签，`""` 表示无标签。可在 [Worktree 主机名](#worktree-主机名) 中更改标签风格或整个主机名。
+
 将 `portless run` 写入一次 `package.json`，即可在所有地方通用。主检出使用纯名称，每个 worktree 获得唯一的子域名。无冲突，无需 `--force`。
 
 ## 自定义 TLD
@@ -275,6 +298,22 @@ flowchart TD
 在 LAN 模式之外，代理及其 HTTP 重定向监听器仅绑定到 IPv4 和 IPv6 回环地址 `127.0.0.1` 和 `::1`。它们不接受通过 LAN、VPN 或其他网络接口的连入。
 
 当 portless 自身返回错误时（未知主机返回 404、误导向请求返回 421、应用不可达返回 502、请求循环返回 508），浏览器会看到带品牌样式的 HTML 页面。而 `Accept` 头不包含 `text/html` 的客户端（例如 curl 或 `fetch`）会收到简短的 JSON 响应体，例如 `{"error":"bad_gateway","upstream":"myapp.localhost","message":"..."}`。来自你自己应用的响应会原样转发。portless TLD 之外的主机名（例如被 DNS 屏蔽列表指向 127.0.0.1 的站点）会得到 421 Misdirected Request，而不是应用列表。
+
+### 别名与上游服务
+
+使用 `--upstream` 可将别名路由到监听在回环上的 HTTP 或 HTTPS 服务：
+
+```bash
+portless alias api 8080 --upstream https
+portless alias api 8080 --upstream https://api.internal
+portless alias api 8080 --upstream http://api.internal
+```
+
+位置参数 port 始终拨号回环。`https` 启用 TLS 并保留传入的 Host 头。`https://` authority 启用 TLS 并用完整 authority（含可选端口）覆盖 Host；SNI 使用不含端口的 DNS 主机名，IP 地址不会作为 SNI 发送。`http://` authority 在不启用 TLS 的情况下覆盖 Host。此设置不改变面向客户端的代理 TLS。authority 只接受主机名或 IP 地址及可选端口，不接受凭据、路径、查询、片段或空白。
+
+上游 TLS 仅连接回环上的 HTTP/1.1 后端。portless 会禁用证书校验，因此 TLS 不会验证后端身份（即使通过 SSH 隧道也是如此）。升级 portless 后请重启代理守护进程。
+
+`portless alias --remove` 只移除并报告 PID 为 0 的路由（包括分离的 Compose 路由），运行中应用拥有的路由会被保留。
 
 ## HTTP/2 + HTTPS
 
@@ -463,11 +502,16 @@ services:
 ```bash
 portless                        # 通过代理运行 dev 脚本
 portless                        # 在 monorepo 根目录运行：运行所有工作区包
-portless run [--name <name>] [cmd] [args...]  # 推断名称，通过代理运行
+portless run [--name <name>] [--prefix <label>] [cmd] [args...]  # 推断名称，通过代理运行
 portless <name> <cmd> [args...]  # 在 https://<name>.localhost 运行应用
+portless get <name>              # 打印服务的 URL（用于脚本或环境变量中的跨服务引用）
 portless alias <name> <port>     # 注册一条静态路由（例如用于 Docker）
 portless alias <name> <port> --force  # 覆盖已有路由
+portless alias <name> <port> --tld <tld>  # 只在指定 TLD 上注册别名
+portless alias <name> <port> --upstream https  # 别名指向回环上的 HTTPS 服务
+portless alias <name> <port> --upstream https://api.internal  # 设置 TLS、Host 与 SNI
 portless alias --remove <name>   # 移除一条静态路由
+portless alias --remove <name> --tld <tld>  # 只移除指定 TLD 的静态路由
 portless compose up [args...]    # 运行 Docker Compose 项目，每个服务一条路由
 portless compose down            # 停止项目并移除其路由
 portless list                    # 显示活动路由和运行时长
@@ -475,6 +519,7 @@ portless doctor                  # 检查代理、路由、DNS 以及 CA 信任
 portless trust                   # 将本地 CA 添加到系统信任存储
 portless clean                   # 移除状态、CA 信任项以及 hosts 区块
 portless prune                   # 杀掉崩溃会话遗留的孤立开发服务器（run 启动时也会执行）
+portless prune --force           # 使用 SIGKILL 而不是 SIGTERM
 portless hosts sync              # 将路由与 /etc/hosts 对齐（修复 Safari）
 portless hosts clean             # 从 /etc/hosts 移除 portless 条目
 
@@ -510,7 +555,7 @@ portless service uninstall       # 移除开机启动服务
 --cert <path>                   使用自定义 TLS 证书
 --key <path>                    使用自定义 TLS 私钥
 --foreground                    以前台方式运行代理，而非守护进程
---tld <tld>                     使用自定义 TLD 代替 .localhost；重复以使用多个
+--tld <tld>                     使用自定义 TLD 代替 .localhost；重复以使用多个；portless alias 中可重复或逗号分隔以仅覆盖指定 TLD
 --wildcard                      允许未注册子域名回退到父路由
 --unprivileged                  不用 sudo 绑定 1024 以下端口（通配符绑定、仅回环对端，除非 --https 否则纯 HTTP）
 --state-dir <path>              配合 service install 使用自定义状态目录
@@ -520,8 +565,11 @@ portless service uninstall       # 移除开机启动服务
 --funnel                        通过 Tailscale Funnel 公开共享应用
 --ngrok                         通过 ngrok 公开共享应用
 --cloudflare                    通过 Cloudflare Quick Tunnel 公开共享应用
---force                         杀掉现有进程并接管其路由
+--force                         杀掉现有进程并接管其路由；portless alias 中覆盖已有路由并停止冲突应用
 --name <name>                   使用 <name> 作为应用名
+--prefix <label>                设置 worktree 标签（"" 表示无标签；仅 portless run）
+--no-worktree                   跳过 worktree 配置与命名（仅 portless get）
+--upstream <value>              别名后端：https、https://<host>[:<port>] 或 http://<host>[:<port>]（仅 portless alias）
 ```
 
 ### 环境变量
@@ -534,6 +582,7 @@ PORTLESS_HTTPS=0                禁用 HTTPS（同 --no-tls）
 PORTLESS_LAN=1                  设置为 1 时启用 LAN 模式（自动检测 LAN IP）
 PORTLESS_LAN_IP=<address>       为 LAN 模式固定一个特定 LAN IP
 PORTLESS_TLD=<tld>[,<tld>]      使用一个或更多 TLD（例如 localhost,test）
+PORTLESS_PREFIX=<label>         设置 worktree 标签（"" 表示无标签，同 --prefix）
 PORTLESS_WILDCARD=1             允许未注册子域名回退到父路由
 PORTLESS_SYNC_HOSTS=0           禁用 /etc/hosts 的自动同步（默认开启）
 PORTLESS_TAILSCALE=1            在你的 Tailscale 网络上共享应用（同 --tailscale）
@@ -582,6 +631,14 @@ portless mcp [--tools <profiles>]
 
 ```json
 { "mcpServers": { "portless": { "command": "portless", "args": ["mcp", "--tools", "all"] } } }
+```
+
+### 面向 AI Agent
+
+从 [skills.sh](https://skills.sh/vercel-labs/portless) 将 portless skill 安装到 Agent 环境：
+
+```bash
+npx skills add vercel-labs/portless
 ```
 
 ## 卸载 / 重置

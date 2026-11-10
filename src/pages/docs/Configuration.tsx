@@ -1,5 +1,5 @@
 import { CodeBlock } from "../../components/CodeBlock";
-import { DocSection, DocP, InlineCode, Callout, DocTable, ExtLink } from "../../components/docs/DocPrimitives";
+import { DocSection, DocP, DocList, InlineCode, Callout, DocTable, ExtLink } from "../../components/docs/DocPrimitives";
 import { configFields } from "../../data";
 
 export function Configuration() {
@@ -15,7 +15,9 @@ export function Configuration() {
         <CodeBlock label="portless.json" code={`{ "name": "myapp" }`} />
         <CodeBlock code={`portless        # -> 运行 "dev" 脚本，https://myapp.localhost`} />
         <DocP>
-          脚本默认为 <InlineCode>"dev"</InlineCode>。若配置中未设置名称，则从 <InlineCode>package.json</InlineCode> 推断。
+          脚本默认为 <InlineCode>"dev"</InlineCode>。若配置中未设置名称，则从 <InlineCode>package.json</InlineCode> 推断。只有{" "}
+          <InlineCode>worktree</InlineCode> 选项会从 workspace 根目录继承到包目录；<InlineCode>name</InlineCode>、
+          <InlineCode>script</InlineCode>、<InlineCode>appPort</InlineCode> 和 <InlineCode>proxy</InlineCode> 只作用于当前目录。
         </DocP>
       </DocSection>
 
@@ -31,6 +33,39 @@ export function Configuration() {
         />
       </DocSection>
 
+      <DocSection id="worktree-hostnames" title="Worktree 主机名">
+        <DocP>
+          在已链接的 worktree 中，<InlineCode>worktree.prefix</InlineCode> 选择标签风格：<InlineCode>last-segment</InlineCode>
+          （默认）使用分支的最后一个 <InlineCode>/</InlineCode> 段，<InlineCode>branch</InlineCode> 保留整个分支，因此{" "}
+          <InlineCode>team-a/login</InlineCode> 会变成 <InlineCode>team-a-login</InlineCode>。
+          <InlineCode>worktree.hostnameTemplate</InlineCode> 会替换整个主机名，且必须包含 <InlineCode>{"{worktree}"}</InlineCode>
+          ；可选的 <InlineCode>{"{name}"}</InlineCode> 表示基础名称，例如 <InlineCode>tenant.{"{worktree}"}-{"{name}"}</InlineCode>。
+          模板在配置加载时校验，必须渲染为合法的 DNS 标签；超过 63 个字符的标签会在运行时用稳定哈希缩短，模板仅在存在标签时生效。
+        </DocP>
+        <DocP>
+          <InlineCode>portless run --prefix</InlineCode> 或 <InlineCode>PORTLESS_PREFIX</InlineCode> 可直接设置标签，覆盖{" "}
+          <InlineCode>worktree.prefix</InlineCode>，并且在 worktree 之外也能使用；<InlineCode>""</InlineCode> 会移除标签。
+          <InlineCode>--no-worktree</InlineCode> 跳过 worktree 配置与命名；不使用它时，当前目录或 workspace
+          中的无效配置会直接失败，而不是打印猜测的 URL。
+        </DocP>
+        <DocP>
+          <InlineCode>portless get</InlineCode> 从当前目录读取 worktree 配置（包括 workspace
+          根目录默认值），而不是从所命名服务的包读取，因此请 <InlineCode>cd</InlineCode> 到对应包以使用其单应用选项。Worktree
+          选项会从 workspace 根目录继承到包目录；在根目录多应用启动时，包自己的 <InlineCode>portless.json</InlineCode>{" "}
+          会生效；对于 worktree 选项，仅当包没有 <InlineCode>portless.json</InlineCode> 时才使用 <InlineCode>package.json</InlineCode>{" "}
+          的 <InlineCode>"portless"</InlineCode> 键，而 <InlineCode>name</InlineCode>、<InlineCode>script</InlineCode>、
+          <InlineCode>appPort</InlineCode> 和 <InlineCode>proxy</InlineCode> 保持现有优先级。
+        </DocP>
+        <CodeBlock
+          label="portless.json"
+          code={`{\n  "worktree": {\n    "prefix": "branch",\n    "hostnameTemplate": "tenant.{worktree}-{name}"\n  }\n}`}
+        />
+        <Callout tone="amber">
+          重复的被代理主机名会在任何应用启动前失败。请使用唯一的应用名，或在启用 worktree 模板时包含{" "}
+          <InlineCode>{"{name}"}</InlineCode>。
+        </Callout>
+      </DocSection>
+
       <DocSection id="package-json-key" title="package.json 中的配置">
         <DocP>
           除了单独的 <InlineCode>portless.json</InlineCode>，你也可以向 <InlineCode>package.json</InlineCode> 添加{" "}
@@ -42,7 +77,7 @@ export function Configuration() {
         />
         <DocP>
           对象形式支持所有单应用字段（<InlineCode>name</InlineCode>、<InlineCode>script</InlineCode>、<InlineCode>appPort</InlineCode>、
-          <InlineCode>proxy</InlineCode>）：
+          <InlineCode>proxy</InlineCode>、<InlineCode>worktree</InlineCode>）：
         </DocP>
         <CodeBlock
           label="package.json"
@@ -65,6 +100,31 @@ export function Configuration() {
         <Callout>
           按下 Ctrl+C 时，portless 会转发中断信号并等待命令的进程树退出。再次按下 Ctrl+C 会转发另一次中断。剩余的子进程会在短暂的宽限期后被终止。
         </Callout>
+      </DocSection>
+
+      <DocSection id="precedence" title="配置优先级">
+        <DocP>最接近的配置优先，类似 Prettier 与 ESLint：</DocP>
+        <DocList>
+          <li>
+            <InlineCode>name</InlineCode>：CLI <InlineCode>--name</InlineCode> 标志 &gt; <InlineCode>package.json</InlineCode>{" "}
+            <InlineCode>"portless"</InlineCode> 键 &gt; <InlineCode>portless.json</InlineCode> 应用条目 &gt;{" "}
+            <InlineCode>package.json</InlineCode> 推断。
+          </li>
+          <li>
+            <InlineCode>script</InlineCode>：CLI <InlineCode>--script</InlineCode> 标志 &gt; <InlineCode>package.json</InlineCode>{" "}
+            <InlineCode>"portless"</InlineCode> 键 &gt; <InlineCode>portless.json</InlineCode> 应用条目 &gt; 默认{" "}
+            <InlineCode>"dev"</InlineCode>。
+          </li>
+          <li>
+            <InlineCode>appPort</InlineCode>：CLI <InlineCode>--app-port</InlineCode> 标志 &gt;{" "}
+            <InlineCode>PORTLESS_APP_PORT</InlineCode> 环境变量 &gt; <InlineCode>package.json</InlineCode>{" "}
+            <InlineCode>"portless"</InlineCode> 键 &gt; <InlineCode>portless.json</InlineCode> 应用条目 &gt; 自动分配。
+          </li>
+          <li>
+            Worktree 标签：CLI <InlineCode>--prefix</InlineCode> 标志（<InlineCode>portless run</InlineCode>）&gt;{" "}
+            <InlineCode>PORTLESS_PREFIX</InlineCode> 环境变量 &gt; 已链接 worktree 的分支。
+          </li>
+        </DocList>
       </DocSection>
 
       <DocSection id="monorepo" title="Monorepo">

@@ -6,7 +6,7 @@ declare const __UPSTREAM_VERSION__: string | undefined;
 export const upstreamVersion: string =
   typeof __UPSTREAM_VERSION__ === "string" && __UPSTREAM_VERSION__.length > 0
     ? __UPSTREAM_VERSION__
-    : "0.16.0";
+    : "0.17.0";
 
 export const heroDiff = {
   before: '"dev": "next dev"',
@@ -97,8 +97,12 @@ export const commands = [
     desc: "在 monorepo 根目录运行：运行所有工作区包",
   },
   {
-    cmd: "portless run [--name <name>] [cmd] [args...]",
+    cmd: "portless run [--name <name>] [--prefix <label>] [cmd] [args...]",
     desc: "推断名称，通过代理运行命令",
+  },
+  {
+    cmd: "portless get <name>",
+    desc: "打印服务的 URL（用于跨服务引用）",
   },
   {
     cmd: "portless <name> <cmd> [args...]",
@@ -110,11 +114,27 @@ export const commands = [
   },
   {
     cmd: "portless alias <name> <port> --force",
-    desc: "覆盖已有路由",
+    desc: "覆盖已有路由，并停止冲突的应用",
+  },
+  {
+    cmd: "portless alias <name> <port> --tld <tld>",
+    desc: "只在指定 TLD 上注册别名（可重复或逗号分隔）",
+  },
+  {
+    cmd: "portless alias <name> <port> --upstream https",
+    desc: "别名指向回环上的 HTTPS 服务，保留传入的 Host 头",
+  },
+  {
+    cmd: "portless alias <name> <port> --upstream https://api.internal",
+    desc: "别名指向 HTTPS 上游，并用该 authority 覆盖 Host 与 SNI",
   },
   {
     cmd: "portless alias --remove <name>",
     desc: "移除一条静态路由",
+  },
+  {
+    cmd: "portless alias --remove <name> --tld <tld>",
+    desc: "只移除指定 TLD 的静态路由",
   },
   {
     cmd: "portless compose up [args...]",
@@ -143,6 +163,10 @@ export const commands = [
   {
     cmd: "portless prune",
     desc: "杀掉崩溃会话遗留的孤立开发服务器（run 启动时也会执行）",
+  },
+  {
+    cmd: "portless prune --force",
+    desc: "使用 SIGKILL 而不是 SIGTERM 清理孤立进程",
   },
   {
     cmd: "portless hosts sync",
@@ -219,7 +243,7 @@ export const options = [
   { flag: "--cert <path>", desc: "使用自定义 TLS 证书" },
   { flag: "--key <path>", desc: "使用自定义 TLS 私钥" },
   { flag: "--foreground", desc: "以前台方式运行代理，而非守护进程" },
-  { flag: "--tld <tld>", desc: "使用自定义 TLD 代替 .localhost；重复以使用多个" },
+  { flag: "--tld <tld>", desc: "使用自定义 TLD 代替 .localhost；重复以使用多个；portless alias 中可重复或逗号分隔以仅覆盖指定 TLD" },
   { flag: "--wildcard", desc: "允许未注册子域名回退到父路由" },
   { flag: "--unprivileged", desc: "不用 sudo 绑定 1024 以下端口（通配符绑定、仅回环对端，除非 --https 否则纯 HTTP）" },
   { flag: "--state-dir <path>", desc: "配合 service install 使用自定义状态目录" },
@@ -229,8 +253,11 @@ export const options = [
   { flag: "--funnel", desc: "通过 Tailscale Funnel 公开共享应用" },
   { flag: "--ngrok", desc: "通过 ngrok 公开共享应用" },
   { flag: "--cloudflare", desc: "通过 Cloudflare Quick Tunnel 公开共享应用" },
-  { flag: "--force", desc: "杀掉现有进程并接管其路由" },
+  { flag: "--force", desc: "杀掉现有进程并接管其路由；portless alias 中覆盖已有路由并停止冲突应用" },
   { flag: "--name <name>", desc: "使用 <name> 作为应用名" },
+  { flag: "--prefix <label>", desc: "设置 worktree 标签（空字符串表示无标签；仅 portless run）" },
+  { flag: "--no-worktree", desc: "跳过 worktree 配置与命名（仅 portless get）" },
+  { flag: "--upstream <value>", desc: "别名后端：https、https://<host>[:<port>] 或 http://<host>[:<port>]（仅 portless alias）" },
   { flag: "--tools <profiles>", desc: "仅 portless mcp：选择 MCP 工具配置组（core、proxy、diagnostics、all，可用逗号分隔）" },
 ];
 
@@ -241,6 +268,7 @@ export const envVars = [
   { name: "PORTLESS_LAN=1", desc: "设置为 1 时启用 LAN 模式（自动检测 LAN IP）", group: "配置" },
   { name: "PORTLESS_LAN_IP=<address>", desc: "为 LAN 模式固定一个特定 LAN IP", group: "配置" },
   { name: "PORTLESS_TLD=<tld>[,<tld>]", desc: "使用一个或更多 TLD（例如 localhost,test）", group: "配置" },
+  { name: "PORTLESS_PREFIX=<label>", desc: "设置 worktree 标签（空字符串表示无标签，同 --prefix）", group: "配置" },
   { name: "PORTLESS_WILDCARD=1", desc: "允许未注册子域名回退到父路由", group: "配置" },
   { name: "PORTLESS_SYNC_HOSTS=0", desc: "禁用 /etc/hosts 的自动同步（默认开启）", group: "配置" },
   { name: "PORTLESS_TAILSCALE=1", desc: "在你的 Tailscale 网络上共享应用（同 --tailscale）", group: "配置" },
@@ -265,6 +293,7 @@ export const configFields = [
   { field: "appPort", type: "number", def: "自动", desc: "子进程的固定端口。" },
   { field: "proxy", type: "boolean", def: "自动", desc: "是否经由代理路由。自动检测。" },
   { field: "apps", type: "object", def: "", desc: "工作区包的覆盖配置，以相对路径作为键。" },
+  { field: "worktree", type: "object", def: "", desc: "Worktree 标签风格与主机名模板。根配置为每个应用的默认值；apps 条目按键覆盖。" },
   { field: "turbo", type: "boolean", def: "true", desc: "设为 false 以使用直接派生，而不是 turborepo。" },
 ];
 

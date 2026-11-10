@@ -44,7 +44,9 @@ export const docsGroups: { id: DocsGroupId; label: string; pages: DocsPageMeta[]
         sections: [
           { id: "portless-json", title: "portless.json" },
           { id: "config-fields", title: "配置字段" },
+          { id: "worktree-hostnames", title: "Worktree 主机名" },
           { id: "package-json-key", title: "package.json 中的配置" },
+          { id: "precedence", title: "配置优先级" },
           { id: "monorepo", title: "Monorepo" },
           { id: "turborepo", title: "Turborepo" },
           { id: "script-flag", title: "覆盖脚本" },
@@ -127,6 +129,7 @@ export const docsGroups: { id: DocsGroupId; label: string; pages: DocsPageMeta[]
         group: "reference",
         sections: [
           { id: "commands", title: "命令" },
+          { id: "alias", title: "别名与上游" },
           { id: "options", title: "选项" },
           { id: "env-vars", title: "环境变量" },
           { id: "reserved-names", title: "保留名称" },
@@ -144,6 +147,7 @@ export const docsGroups: { id: DocsGroupId; label: string; pages: DocsPageMeta[]
           { id: "overview", title: "启动服务器" },
           { id: "tool-profiles", title: "工具配置组" },
           { id: "client-config", title: "客户端配置" },
+          { id: "agent-skill", title: "Agent Skill" },
           { id: "limitations", title: "限制" },
         ],
         readmeHeadings: ["## MCP 服务器"],
