@@ -6,7 +6,7 @@ import { dirname, resolve } from "node:path";
 import type { Plugin } from "vite";
 import { docsPages } from "./src/navigation/docsNav.ts";
 
-const FALLBACK_UPSTREAM_VERSION = "0.16.0";
+const FALLBACK_UPSTREAM_VERSION = "0.17.0";
 
 async function resolveUpstreamVersion(): Promise<string> {
   if (process.env.VITE_UPSTREAM_VERSION) {
