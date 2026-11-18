@@ -16,8 +16,8 @@ export function Sharing() {
           布尔值），可使代理每次启动时默认进入 LAN 模式。
         </DocP>
         <DocP>
-          portless 通过 <InlineCode>proxy.lan</InlineCode> 记住 LAN 模式，因此如果你停止一个 LAN 代理并再次启动，它会保持 LAN
-          模式。所有代理设置（端口、TLS、TLD、LAN）都会被持久化，并在自动启动时复用，除非被显式标志或环境变量覆盖。用{" "}
+          portless 在代理运行期间将 LAN 模式保存到 <InlineCode>proxy.lan</InlineCode>，但只有代理意外退出才会把它保留给自动启动。正常执行{" "}
+          <InlineCode>portless proxy stop</InlineCode> 会清除它，因此下次启动使用当次的标志与 <InlineCode>PORTLESS_LAN</InlineCode>。用{" "}
           <InlineCode>PORTLESS_LAN=0</InlineCode> 可在单次启动中切回 <InlineCode>.localhost</InlineCode> 模式。如果代理已在运行且显式
           LAN/TLS/TLD 设置不同，portless 会发出警告并要求你先停止它。
         </DocP>

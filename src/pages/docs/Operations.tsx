@@ -28,14 +28,20 @@ export function Operations() {
 
       <DocSection id="uninstall" title="卸载 / 重置">
         <DocP>
-          要从你的机器移除 portless 数据（<InlineCode>~/.portless</InlineCode> 下的代理状态与系统状态目录、portless
+          要从你的机器移除 portless 数据（<InlineCode>~/.portless</InlineCode> 下的代理状态与系统状态目录、已安装的开机启动服务、portless
           安装到操作系统信任存储中的本地 CA，以及 <InlineCode>/etc/hosts</InlineCode> 中的 portless 区块）：
         </DocP>
-        <CodeBlock code={`portless clean`} />
+        <CodeBlock code={`portless clean\nportless clean --yes    # CI 或无终端时跳过确认`} />
         <DocP>
-          macOS/Linux 可能会提示输入 <InlineCode>sudo</InlineCode>。通过 <InlineCode>--cert</InlineCode> 和{" "}
-          <InlineCode>--key</InlineCode> 传入的自定义证书路径不会被删除。如果信任存储移除失败，portless 会保留其 CA
-          证书和密钥，以便后续 <InlineCode>portless clean</InlineCode> 能安全重试。
+          该命令会预览这些操作并请求确认；在 CI 或无终端时使用 <InlineCode>--yes</InlineCode>（或 <InlineCode>-y</InlineCode>）。
+          macOS/Linux 可能会提示输入 <InlineCode>sudo</InlineCode>，失败的 CA、状态文件与 hosts 步骤会以 sudo
+          对同一组白名单目标重试。如果无法确认代理已停止，其 PID、端口、运行时标记文件与 CA 文件会被保留，CA 也保持受信任。服务、CA、状态文件与
+          hosts 清理失败会产生非零退出码。
+        </DocP>
+        <DocP>
+          通过 <InlineCode>--cert</InlineCode> 和 <InlineCode>--key</InlineCode> 传入的自定义证书路径不会被删除。如果信任存储移除仍然失败，portless
+          会保留其 CA 证书和密钥，以便后续 <InlineCode>portless clean</InlineCode> 能安全重试。其他用户拥有或可写的状态目录会被放过：clean
+          打印原因并以非零码退出，未通过检查的 <InlineCode>/tmp/portless</InlineCode> 目录会被跳过而不报错（参见命令参考中的状态目录安全规则）。
         </DocP>
       </DocSection>
 
@@ -61,11 +67,25 @@ export function Operations() {
       <DocSection id="troubleshooting" title="故障排查">
         <DocP>
           运行 <InlineCode>portless doctor</InlineCode> 可检查本地健康状况而不改变状态。它会检查 Node.js、状态目录、代理存活、路由条目、HTTPS
-          CA 信任、主机名解析以及 LAN 模式前置条件，然后打印建议的修复方案。
+          CA 信任、主机名解析以及 LAN 模式前置条件，然后打印建议的修复方案。使用 <InlineCode>portless doctor --json</InlineCode> 可以 JSON
+          打印报告。代理未处于 LAN 模式时，可用 <InlineCode>portless doctor --lan</InlineCode> 运行 LAN 模式检查；
+          <InlineCode>--ip &lt;address&gt;</InlineCode> 效果相同，且必须是合法的 IP 地址。
         </DocP>
         <CodeBlock
-          code={`portless doctor          # 检查本地健康状况\nportless hosts sync     # 修复 Safari DNS\nportless hosts clean    # 清理 hosts 条目\nportless clean          # 移除所有状态`}
+          code={`portless doctor          # 检查本地健康状况\nportless doctor --json   # 以 JSON 打印诊断报告\nportless hosts sync     # 修复 Safari DNS\nportless hosts clean    # 清理 hosts 条目\nportless clean          # 移除所有状态`}
         />
+        <DocP>
+          <InlineCode>portless prune</InlineCode> 找出所属 portless 进程已消失的路由，在已记录的进程组消失后移除过期路由及其
+          Tailscale 与隧道共享。在 macOS 与 Linux 上，仅当进程组组长仍匹配记录的启动时间、或先前清理记录的成员仍匹配时，才会向该进程组发送信号，
+          并在所有成员退出后才报告进程组已停止。只要仍有成员在运行（即使它在 SIGTERM 后关闭了端口），prune 会保留路由与共享并记录存活的成员，
+          以便 <InlineCode>portless prune --force</InlineCode> 重试时验证该成员并发送 SIGKILL。无法验证的进程组会被保留并报告，绝不发送信号；
+          无法证明属于已记录进程组的端口占用进程同样只报告、不杀掉。
+        </DocP>
+        <DocP>
+          在 Windows 上，prune 无法验证或信号化进程组，只移除过期路由与 Tailscale 共享并报告端口占用进程。prune 与 clean
+          仅在可执行文件名匹配时才停止已记录的 ngrok 与 cloudflared 隧道（包括 Windows 上）。<InlineCode>portless run</InlineCode>{" "}
+          启动时也会尝试停止已记录的孤立进程组。
+        </DocP>
         <Callout tone="emerald">
           如果 portless 在非交互式环境中退出，通常是因为没有 TTY 或设置了 <InlineCode>CI=1</InlineCode>。这是预期行为，错误信息会说明需要
           sudo 或 TTY 的原因。

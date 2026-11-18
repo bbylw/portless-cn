@@ -6,7 +6,7 @@ declare const __UPSTREAM_VERSION__: string | undefined;
 export const upstreamVersion: string =
   typeof __UPSTREAM_VERSION__ === "string" && __UPSTREAM_VERSION__.length > 0
     ? __UPSTREAM_VERSION__
-    : "0.17.0";
+    : "0.18.1";
 
 export const heroDiff = {
   before: '"dev": "next dev"',
@@ -97,12 +97,20 @@ export const commands = [
     desc: "在 monorepo 根目录运行：运行所有工作区包",
   },
   {
+    cmd: "portless -- [args...]",
+    desc: "把 -- 之后的参数传给脚本（monorepo 根目录传给每个应用）",
+  },
+  {
     cmd: "portless run [--name <name>] [--prefix <label>] [cmd] [args...]",
     desc: "推断名称，通过代理运行命令",
   },
   {
     cmd: "portless get <name>",
     desc: "打印服务的 URL（用于跨服务引用）",
+  },
+  {
+    cmd: "portless get <name> --json",
+    desc: "以 JSON 打印输入名称、主机名与 URL",
   },
   {
     cmd: "portless <name> <cmd> [args...]",
@@ -149,8 +157,16 @@ export const commands = [
     desc: "显示活动路由和运行时长",
   },
   {
+    cmd: "portless list --json",
+    desc: "以 JSON 打印路由（含 upstream 与隧道字段）",
+  },
+  {
     cmd: "portless doctor",
     desc: "检查代理、路由、DNS 以及 CA 信任",
+  },
+  {
+    cmd: "portless doctor --json",
+    desc: "以 JSON 打印诊断报告（存在失败项时退出码为 1）",
   },
   {
     cmd: "portless trust",
@@ -158,15 +174,19 @@ export const commands = [
   },
   {
     cmd: "portless clean",
-    desc: "移除状态、CA 信任项以及 hosts 区块",
+    desc: "预览并确认后移除状态、服务、CA 信任项以及 hosts 区块",
+  },
+  {
+    cmd: "portless clean --yes",
+    desc: "跳过确认执行清理（CI 或无终端时必需，-y 等效）",
   },
   {
     cmd: "portless prune",
-    desc: "杀掉崩溃会话遗留的孤立开发服务器（run 启动时也会执行）",
+    desc: "清理崩溃会话遗留的过期路由、共享与孤立进程（run 启动时也会执行）",
   },
   {
     cmd: "portless prune --force",
-    desc: "使用 SIGKILL 而不是 SIGTERM 清理孤立进程",
+    desc: "对上次清理中记录存活的进程成员发送 SIGKILL",
   },
   {
     cmd: "portless hosts sync",
@@ -237,8 +257,8 @@ export const commands = [
 export const options = [
   { flag: "-p, --port <number>", desc: "代理端口（默认：443，使用 --no-tls 时为 80）。仅在绑定需要 root 时才请求 sudo；提权失败会报错退出而不是换端口" },
   { flag: "--no-tls", desc: "禁用 HTTPS（在端口 80 上使用纯 HTTP）" },
-  { flag: "--https", desc: "启用 HTTPS（默认，为兼容性而接受）" },
-  { flag: "--lan", desc: "启用 LAN 模式（用于真实设备的 mDNS .local）" },
+  { flag: "--https", desc: "强制启用 HTTPS（覆盖 PORTLESS_HTTPS=0；与 --unprivileged 搭配时在 443 上开启 HTTPS；与 --no-tls 同用退出码 2）" },
+  { flag: "--lan", desc: "启用 LAN 模式（用于真实设备的 mDNS .local；doctor 中用于运行 LAN 检查）" },
   { flag: "--ip <address>", desc: "固定一个特定 LAN IP（禁用自动跟随；与 --lan 一起使用）" },
   { flag: "--cert <path>", desc: "使用自定义 TLS 证书" },
   { flag: "--key <path>", desc: "使用自定义 TLS 私钥" },
@@ -247,8 +267,8 @@ export const options = [
   { flag: "--wildcard", desc: "允许未注册子域名回退到父路由" },
   { flag: "--unprivileged", desc: "不用 sudo 绑定 1024 以下端口（通配符绑定、仅回环对端，除非 --https 否则纯 HTTP）" },
   { flag: "--state-dir <path>", desc: "配合 service install 使用自定义状态目录" },
-  { flag: "--script <name>", desc: "运行特定的 package.json 脚本（默认：dev）" },
-  { flag: "--app-port <number>", desc: "为应用使用固定端口（跳过自动分配）" },
+  { flag: "--script <name>", desc: "运行特定的 package.json 脚本（默认：dev；仅零参数模式与 portless run）" },
+  { flag: "--app-port <number>", desc: "为应用使用固定端口（跳过自动分配；多应用启动时拒绝 PORTLESS_APP_PORT，请改用各应用的 appPort）" },
   { flag: "--tailscale", desc: "在你的 Tailscale 网络（tailnet）上共享应用" },
   { flag: "--funnel", desc: "通过 Tailscale Funnel 公开共享应用" },
   { flag: "--ngrok", desc: "通过 ngrok 公开共享应用" },
@@ -259,6 +279,8 @@ export const options = [
   { flag: "--no-worktree", desc: "跳过 worktree 配置与命名（仅 portless get）" },
   { flag: "--upstream <value>", desc: "别名后端：https、https://<host>[:<port>] 或 http://<host>[:<port>]（仅 portless alias）" },
   { flag: "--tools <profiles>", desc: "仅 portless mcp：选择 MCP 工具配置组（core、proxy、diagnostics、all，可用逗号分隔）" },
+  { flag: "--json", desc: "以 JSON 输出（仅 portless list、get、doctor；MCP 工具同样支持）" },
+  { flag: "--yes, -y", desc: "跳过确认（仅 portless clean；CI 或无终端时必需）" },
 ];
 
 export const envVars = [
@@ -277,7 +299,7 @@ export const envVars = [
   { name: "PORTLESS_UNPRIVILEGED=1", desc: "不用 sudo 绑定 1024 以下端口（同 --unprivileged）", group: "配置" },
   { name: "PORTLESS_CLOUDFLARE=1", desc: "通过 Cloudflare Quick Tunnel 公开共享应用（同 --cloudflare）", group: "配置" },
   { name: "PORTLESS_STATE_DIR=<path>", desc: "覆盖状态目录", group: "配置" },
-  { name: "PORTLESS=0", desc: "绕过代理，直接运行命令（使用默认端口）", group: "配置" },
+  { name: "PORTLESS=0", desc: "绕过代理，直接运行命令（使用默认端口；get、list 等命令仍正常运行）", group: "配置" },
   { name: "PORT", desc: "子进程应监听的临时端口", group: "注入到子进程" },
   { name: "HOST", desc: "通常为 127.0.0.1（LAN 模式下 Expo 会省略）", group: "注入到子进程" },
   { name: "PORTLESS_URL", desc: "主要公开 URL（例如 https://myapp.localhost）", group: "注入到子进程" },

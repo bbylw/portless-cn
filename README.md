@@ -40,11 +40,11 @@ portless myapp next dev
 
 默认启用 HTTPS（带 HTTP/2）。首次运行时，portless 会生成一个本地 CA、信任它，并绑定 443 端口（在 macOS/Linux 上通过 sudo 自动提权）。使用 `--no-tls` 则使用纯 HTTP。
 
-代理在你运行应用时自动启动。会通过 `PORT` 环境变量分配一个随机端口（4000–4999）。大多数框架（Next.js、Express、Nuxt 等）会自动读取该变量。对于忽略 `PORT` 的框架（Vite、VitePlus、VitePress、Astro、React Router、Angular、Expo、React Native、Wrangler），portless 会自动注入正确的 `--port` 参数，并在需要时同时注入匹配的 `--host` 参数（Wrangler 为 `--ip`）。注入会穿透到以框架或已知运行器开头的 package 脚本（`"dev": "vite"`、`"dev": "bunx vite"`）。只有框架的服务端命令会获得这些参数（`dev`、`serve`、`preview`、`start`、裸 `vite` 或 `vite [root]`）；不提供服务的命令（如 `vite build`、`vite optimize`、`vp test` 或 `astro check`）会拒绝这些参数并原样保留。Expo 的连接模式（`--localhost`、`--lan`、`--tunnel`）会被保留，同时仍然注入所分配的端口。portless 无法归类的脚本也会原样保留：在它未跟踪参数语法的 CLI 上，子命令之前的某个参数（`vp --mode dev build`）。当附加参数对其无效时，portless 同样会保留脚本原样：复合命令（`&&`、`|`、`;`）、尾部 `#` 注释、其自身的 `--` 选项终止符、环境前缀（`NODE_ENV=production vite`）、委派给另一个脚本（`"dev": "npm run dev:vite"`），或脚本名之前带有运行器参数（`bun run --bun dev`）。这些情况会保留它们自己的端口，因此需要你在脚本中自行设置。
+代理在你运行应用时自动启动。会通过 `PORT` 环境变量分配一个随机端口（4000–4999）。大多数框架（Next.js、Express、Nuxt 等）会自动读取该变量。对于忽略 `PORT` 的框架（Vite、VitePlus、VitePress、Astro、React Router、Angular、Expo、React Native、Wrangler），portless 会自动注入正确的 `--port` 参数，并在需要时同时注入匹配的 `--host` 参数（Wrangler 为 `--ip`）。注入会穿透到以框架或已知运行器开头的 package 脚本（`"dev": "vite"`、`"dev": "bunx vite"`）。只有框架的服务端命令会获得这些参数（`dev`、`serve`、`preview`、`start`、裸 `vite` 或 `vite [root]`）；不提供服务的命令（如 `vite build`、`vite optimize`、`vp test` 或 `astro check`）会拒绝这些参数并原样保留。Expo 的连接模式（`--localhost`、`--lan`、`--tunnel`）会被保留，同时仍然注入所分配的端口。portless 无法归类的脚本也会原样保留：在它未跟踪参数语法的 CLI 上，子命令之前的某个参数（`vp --mode dev build`）。当附加参数对其无效时，portless 同样会保留脚本原样：复合命令（`&&`、`|`、`;`）、尾部 `#` 注释、其自身的 `--` 选项终止符、环境前缀（`NODE_ENV=production vite`）、委派给另一个脚本（`"dev": "npm run dev:vite"`），或脚本名之前带有运行器参数（`bun run --bun dev`）。这些情况会保留它们自己的端口，因此需要你在脚本中自行设置。在使用 Turbo 的 workspace 根目录，Turbo 会自行启动每个包脚本，因此请在框架配置中读取 `PORT` 和 `HOST`（例如 Vite 从 `process.env` 设置 `server.port` 与 `server.host`），或在根目录的 portless 配置中设置 `"turbo": false`，让 portless 启动应用并注入参数。
 
 如果被包装的命令会自我守护（进程退出，但它启动的服务器仍在已分配的端口上监听），portless 会让路由继续指向该服务器并打印其 PID。服务器停止时，路由随之移除。
 
-自动启动时，portless 会复用最近一次代理运行时的配置（端口、TLS、TLD），因此重启或重启机器后不会静默回退到默认值。显式环境变量（`PORTLESS_PORT`、`PORTLESS_HTTPS` 等）始终优先。
+自动启动时，portless 仅在代理意外退出后复用已保存的端口、TLS、TLD 与 LAN 设置。正常执行 `portless proxy stop` 会清除它们，因此下次启动使用当次传入的标志与环境变量。显式标志与环境变量（`PORTLESS_PORT`、`PORTLESS_HTTPS` 等）始终优先，因此 `PORTLESS_PORT` 会让代理在该端口启动，而不是已保存的端口。
 
 portless 将按用户状态存储在 `~/.portless`。当代理以 sudo 运行时，它会从调用用户的 home 目录解析此路径，使代理与非特权应用进程共享同一套路由注册。
 
@@ -57,6 +57,8 @@ portless 将按用户状态存储在 `~/.portless`。当代理以 sudo 运行时
 ```bash
 portless        # -> 运行 "dev" 脚本，https://<project>.localhost
 ```
+
+在 `--` 之后传入的参数会交给脚本，因此 `portless -- --inspect` 会带 `--inspect` 运行 `dev`。向带有 shell 运算符或注释的脚本转发参数会以退出码 2 退出；请直接运行命令，或把脚本改为单一命令。Turbo 模式下只检查根脚本，Turbo 会把参数原样传给每个包脚本。
 
 使用可选的 `portless.json` 覆盖默认值：
 
@@ -297,6 +299,8 @@ flowchart TD
 
 在 LAN 模式之外，代理及其 HTTP 重定向监听器仅绑定到 IPv4 和 IPv6 回环地址 `127.0.0.1` 和 `::1`。它们不接受通过 LAN、VPN 或其他网络接口的连入。
 
+portless 把自身的状态行写到 stderr，因此 stdout 只包含你应用的输出。非空的 `NO_COLOR` 会禁用颜色；`FORCE_COLOR=0` 禁用颜色，`FORCE_COLOR=1` 强制启用。
+
 当 portless 自身返回错误时（未知主机返回 404、误导向请求返回 421、应用不可达返回 502、请求循环返回 508），浏览器会看到带品牌样式的 HTML 页面。而 `Accept` 头不包含 `text/html` 的客户端（例如 curl 或 `fetch`）会收到简短的 JSON 响应体，例如 `{"error":"bad_gateway","upstream":"myapp.localhost","message":"..."}`。来自你自己应用的响应会原样转发。portless TLD 之外的主机名（例如被 DNS 屏蔽列表指向 127.0.0.1 的站点）会得到 421 Misdirected Request，而不是应用列表。
 
 ### 别名与上游服务
@@ -311,9 +315,11 @@ portless alias api 8080 --upstream http://api.internal
 
 位置参数 port 始终拨号回环。`https` 启用 TLS 并保留传入的 Host 头。`https://` authority 启用 TLS 并用完整 authority（含可选端口）覆盖 Host；SNI 使用不含端口的 DNS 主机名，IP 地址不会作为 SNI 发送。`http://` authority 在不启用 TLS 的情况下覆盖 Host。此设置不改变面向客户端的代理 TLS。authority 只接受主机名或 IP 地址及可选端口，不接受凭据、路径、查询、片段或空白。
 
+`portless list --json` 在路由设置了上游时会包含其 `upstream` 对象，`tls` 与 `host` 值与此处一致。
+
 上游 TLS 仅连接回环上的 HTTP/1.1 后端。portless 会禁用证书校验，因此 TLS 不会验证后端身份（即使通过 SSH 隧道也是如此）。升级 portless 后请重启代理守护进程。
 
-`portless alias --remove` 只移除并报告 PID 为 0 的路由（包括分离的 Compose 路由），运行中应用拥有的路由会被保留。
+`portless alias --remove` 只移除并报告 PID 为 0 的路由（包括分离的 Compose 路由），运行中应用拥有的路由会被保留。它也会移除代理已不再服务的 TLD 上的同名路由，并把这类主机名的最后一个标签视为其 TLD；对于之前的多段 TLD，请传入 `--tld` 或完整主机名。
 
 ## HTTP/2 + HTTPS
 
@@ -386,7 +392,7 @@ portless proxy start --lan --ip 192.168.1.42
 
 `--lan` 显式将代理绑定到 IPv4 和 IPv6 未指定地址 `0.0.0.0` 和 `::`，并切换到 mDNS 发现。这使得服务以 `<name>.local` 的形式供同一网络中的设备访问。portless 会自动检测你的 LAN IP 并自动跟随 Wi-Fi/IP 变化，但你可以用 `--ip <address>` 或导出 `PORTLESS_LAN_IP` 固定另一个地址。在你的 shell 中设置 `PORTLESS_LAN=1`（0/1 布尔值），可使代理每次启动时默认进入 LAN 模式。
 
-portless 通过 `proxy.lan` 记住 LAN 模式，因此如果你停止一个 LAN 代理并再次启动，它会保持 LAN 模式。所有代理设置（端口、TLS、TLD、LAN）都会被持久化，并在自动启动时复用，除非被显式标志或环境变量覆盖。用 `PORTLESS_LAN=0` 可在单次启动中切回 `.localhost` 模式。如果代理已在运行且显式 LAN/TLS/TLD 设置不同，portless 会发出警告并要求你先停止它。
+portless 在代理运行期间将 LAN 模式保存到 `proxy.lan`，但只有代理意外退出才会把它保留给自动启动。正常执行 `portless proxy stop` 会清除它，因此下次启动使用当次的标志与 `PORTLESS_LAN`。用 `PORTLESS_LAN=0` 可在单次启动中切回 `.localhost` 模式。如果代理已在运行且显式 LAN/TLS/TLD 设置不同，portless 会发出警告并要求你先停止它。
 
 LAN 模式依赖于 portless 已经派生的系统 mDNS 工具：macOS 自带 `dns-sd`，而 Linux 使用来自 `avahi-utils` 的 `avahi-publish-address`（通过 `sudo apt install avahi-utils` 或你发行版的等效命令安装）。如果命令缺失或你的网络不可达，`portless proxy start --lan` 会打印相关错误并退出。
 
@@ -499,12 +505,16 @@ services:
 
 ## 命令
 
+运行 `portless --help` 查看命令列表与常用应用选项，`portless proxy --help` 查看代理选项，`portless <command> --help` 查看单个命令详情。`--help` 与 `-h` 只打印帮助，绝不运行命令；在 `run <cmd>`、`compose <subcommand>` 或 `--` 之后，它们属于被包装的命令，因此 `portless run next dev --help` 会把 `--help` 传给 Next.js。用法错误（未知标志、缺少参数、无终端却需要 `--yes` 的命令等）以退出码 `2` 退出，其他失败以 `1` 退出；被包装的命令（`run`、具名应用与 `compose`）保留自身的退出码。`run`、具名应用与 `service install` 的取值标志接受 `--flag value` 或 `--flag=value`。使用 `portless list --json` 或 `portless get <name> --json` 获取 JSON 输出。
+
 ```bash
 portless                        # 通过代理运行 dev 脚本
 portless                        # 在 monorepo 根目录运行：运行所有工作区包
+portless -- [args...]           # 把 -- 之后的参数传给脚本
 portless run [--name <name>] [--prefix <label>] [cmd] [args...]  # 推断名称，通过代理运行
 portless <name> <cmd> [args...]  # 在 https://<name>.localhost 运行应用
 portless get <name>              # 打印服务的 URL（用于脚本或环境变量中的跨服务引用）
+portless get <name> --json       # 以 JSON 打印名称、主机名与 URL
 portless alias <name> <port>     # 注册一条静态路由（例如用于 Docker）
 portless alias <name> <port> --force  # 覆盖已有路由
 portless alias <name> <port> --tld <tld>  # 只在指定 TLD 上注册别名
@@ -515,15 +525,18 @@ portless alias --remove <name> --tld <tld>  # 只移除指定 TLD 的静态路�
 portless compose up [args...]    # 运行 Docker Compose 项目，每个服务一条路由
 portless compose down            # 停止项目并移除其路由
 portless list                    # 显示活动路由和运行时长
+portless list --json             # 以 JSON 打印路由
 portless doctor                  # 检查代理、路由、DNS 以及 CA 信任
+portless doctor --json           # 以 JSON 打印诊断报告
 portless trust                   # 将本地 CA 添加到系统信任存储
-portless clean                   # 移除状态、CA 信任项以及 hosts 区块
-portless prune                   # 杀掉崩溃会话遗留的孤立开发服务器（run 启动时也会执行）
-portless prune --force           # 使用 SIGKILL 而不是 SIGTERM
+portless clean                   # 预览并确认后移除状态、服务、CA 信任项以及 hosts 区块
+portless clean --yes             # 跳过确认执行清理（CI 或无终端时必需）
+portless prune                   # 清理崩溃会话遗留的过期路由、共享与孤立进程（run 启动时也会执行）
+portless prune --force           # 对上次清理中记录存活的进程成员发送 SIGKILL
 portless hosts sync              # 将路由与 /etc/hosts 对齐（修复 Safari）
 portless hosts clean             # 从 /etc/hosts 移除 portless 条目
 
-# 禁用 portless（直接运行命令）
+# 禁用 portless（直接运行命令；get、list 等命令仍正常运行）
 PORTLESS=0 pnpm dev              # 绕过代理，使用默认端口
 
 # 代理控制
@@ -544,13 +557,21 @@ portless service status          # 显示服务与代理状态
 portless service uninstall       # 移除开机启动服务
 ```
 
+`portless prune` 移除过期路由与共享，不会杀掉无关的端口占用进程。已记录的进程组只要仍有存活成员，即使它已关闭端口，其路由与共享也会被保留；prune 会记录存活的成员，并在 `portless prune --force` 重试时将其停止。无法验证的进程组会被保留并报告，绝不发送信号；无法证明属于已记录进程组的端口占用进程同样只报告、不杀掉。prune 与 clean 仅在可执行文件名匹配时才停止已记录的 ngrok 与 cloudflared 隧道（包括 Windows 上）。
+
+URL 无法加载时请先运行 `portless doctor`。它检查代理、路由、DNS 与 CA 信任，不改变任何状态，并打印建议的修复方案。使用 `portless doctor --json` 可以 JSON 打印报告。
+
+`portless clean` 会预览清理内容并请求确认。在 CI 或无终端时使用 `portless clean --yes`（或 `-y`）。在 macOS 与 Linux 上，失败的 CA、状态文件或 hosts 步骤会以 sudo 对同一组白名单目标重试。如果无法确认代理已停止，其 PID、端口、运行时标记文件与 CA 文件会被保留，CA 也保持受信任。服务、CA、状态文件与 hosts 清理失败会产生非零退出码。
+
+在 macOS 与 Linux 上，`portless trust`、`portless proxy stop`、`portless prune`、`portless hosts sync`、`portless service install` 与 `portless clean` 仅在状态目录无法被其他用户更改时才会操作它。该目录及其每一级父目录必须归你或 root 所有，且不可被组或其他用户写入。设置了 sticky 位的父目录（如 `/tmp`）是允许的。路径上的符号链接仅当归你或 root 所有、且位于通过同样检查的目录中时才被接受。目录未通过检查时，`portless trust`、`portless proxy stop`、`portless prune`、`portless hosts sync` 与 `portless service install` 会带上原因退出，不发送任何信号，也不修改 hosts 文件。代理不会从这样的目录启动，注册路由的命令（如 `portless run` 与 `portless alias`）会以同样的原因退出。已在运行的代理保留已加载的路由，并停止重新加载。portless 绝不修改未通过检查的状态目录的权限或所有者。请对它指出的目录执行 `chmod go-w <dir>`，或将 `PORTLESS_STATE_DIR` 指向只有你可写的目录。`portless clean` 会放过这样的目录，打印原因并以非零码退出；未通过检查的 `/tmp/portless` 目录会被跳过而不报错。`portless proxy stop` 与 `portless clean` 仅在没有任何迹象表明记录的 PID 与代理端口上应答的进程不是同一进程时，才会向该 PID 发送信号。
+
 ### 选项
 
 ```
 -p, --port <number>             代理端口（默认：443，使用 --no-tls 时为 80）
 --no-tls                        禁用 HTTPS（在端口 80 上使用纯 HTTP）
---https                         启用 HTTPS（默认，为兼容性而接受）
---lan                           启用 LAN 模式（用于真实设备的 mDNS .local）
+--https                         强制启用 HTTPS（覆盖 PORTLESS_HTTPS=0；与 --no-tls 同用退出码 2）
+--lan                           启用 LAN 模式（用于真实设备的 mDNS .local；doctor 中用于运行 LAN 检查）
 --ip <address>                  固定一个特定 LAN IP（禁用自动跟随；与 --lan 一起使用）
 --cert <path>                   使用自定义 TLS 证书
 --key <path>                    使用自定义 TLS 私钥
@@ -559,8 +580,8 @@ portless service uninstall       # 移除开机启动服务
 --wildcard                      允许未注册子域名回退到父路由
 --unprivileged                  不用 sudo 绑定 1024 以下端口（通配符绑定、仅回环对端，除非 --https 否则纯 HTTP）
 --state-dir <path>              配合 service install 使用自定义状态目录
---script <name>                 运行特定的 package.json 脚本（默认：dev）
---app-port <number>             为应用使用固定端口（跳过自动分配）
+--script <name>                 运行特定的 package.json 脚本（默认：dev；仅零参数模式与 portless run）
+--app-port <number>             为应用使用固定端口（跳过自动分配；多应用启动时拒绝 PORTLESS_APP_PORT）
 --tailscale                     在你的 Tailscale 网络（tailnet）上共享应用
 --funnel                        通过 Tailscale Funnel 公开共享应用
 --ngrok                         通过 ngrok 公开共享应用
@@ -570,6 +591,8 @@ portless service uninstall       # 移除开机启动服务
 --prefix <label>                设置 worktree 标签（"" 表示无标签；仅 portless run）
 --no-worktree                   跳过 worktree 配置与命名（仅 portless get）
 --upstream <value>              别名后端：https、https://<host>[:<port>] 或 http://<host>[:<port>]（仅 portless alias）
+--json                          以 JSON 输出（仅 portless list、get、doctor）
+--yes, -y                       跳过确认（仅 portless clean；CI 或无终端时必需）
 ```
 
 ### 环境变量
@@ -617,7 +640,7 @@ portless mcp [--tools <profiles>]
 - `diagnostics`：`doctor`、`prune`、`version`
 - `all`：上述配置组中的所有工具
 
-除 `tools_profiles` 外，所有工具都接受共享的 `cwd`、`extraArgs` 和 `timeoutMs` 参数。`cwd` 默认为服务器的工作目录，`extraArgs` 会追加在工具的类型化参数之后，`timeoutMs` 默认为 120000。错误的参数（未知或类型不对）以及调用未启用的工具会返回带 `isError: true` 的工具结果并说明修复方法，让模型能够纠正调用；未知参数会列出该工具自身的参数。
+除 `tools_profiles` 外，所有工具都接受共享的 `cwd`、`extraArgs` 和 `timeoutMs` 参数。`cwd` 默认为服务器的工作目录，`extraArgs` 会追加在工具的类型化参数之后，`timeoutMs` 默认为 120000。`list`、`get` 与 `doctor` 工具同样可以传入 `--json` 获取 JSON 输出。错误的参数（未知或类型不对）以及调用未启用的工具会返回带 `isError: true` 的工具结果并说明修复方法，让模型能够纠正调用；未知参数会列出该工具自身的参数。
 
 服务器不暴露开发服务器启动命令：`portless run`、`portless <name> <cmd>`、`portless --name <name> <cmd>` 以及零参数模式都会在前台启动开发服务器，而 MCP 没有脱离（detached）形式。`portless proxy start --foreground` 会阻塞。`portless trust`、`portless clean`、`portless hosts sync`、`portless hosts clean` 以及 `portless service` 可能提示 sudo 并需要 TTY。`portless mcp` 和 `portless mcp --help` 被省略，因为它们分别是服务器本身和面向人类的帮助。
 
@@ -643,13 +666,13 @@ npx skills add vercel-labs/portless
 
 ## 卸载 / 重置
 
-要从你的机器移除 portless 数据（`~/.portless` 下的代理状态与系统状态目录、portless 安装到操作系统信任存储中的本地 CA，以及 `/etc/hosts` 中的 portless 区块）：
+要从你的机器移除 portless 数据（`~/.portless` 下的代理状态与系统状态目录、已安装的开机启动服务、portless 安装到操作系统信任存储中的本地 CA，以及 `/etc/hosts` 中的 portless 区块）：
 
 ```bash
 portless clean
 ```
 
-macOS/Linux 可能会提示输入 `sudo`。通过 `--cert` 和 `--key` 传入的自定义证书路径不会被删除。如果信任存储移除失败，portless 会保留其 CA 证书和密钥，以便后续 `portless clean` 能安全重试。
+该命令会预览这些操作并请求确认；在 CI 或无终端时使用 `portless clean --yes`（或 `-y`）。macOS/Linux 可能会提示输入 `sudo`，失败的 CA、状态文件与 hosts 步骤会以 sudo 对同一组白名单目标重试。如果无法确认代理已停止，其 PID、端口、运行时标记文件与 CA 文件会被保留，CA 也保持受信任。服务、CA、状态文件与 hosts 清理失败会产生非零退出码。通过 `--cert` 和 `--key` 传入的自定义证书路径不会被删除。如果信任存储移除仍然失败，portless 会保留其 CA 证书和密钥，以便后续 `portless clean` 能安全重试。其他用户拥有或可写的状态目录会被放过：clean 打印原因并以非零码退出，未通过检查的 `/tmp/portless` 目录会被跳过而不报错（参见[命令](#命令)中的状态目录规则）。
 
 ## Safari / DNS
 
@@ -668,7 +691,7 @@ portless hosts clean   # 稍后清理
 
 ## 故障排查
 
-运行 `portless doctor` 可检查本地健康状况而不改变状态。它会检查 Node.js、状态目录、代理存活、路由条目、HTTPS CA 信任、主机名解析以及 LAN 模式前置条件，然后打印建议的修复方案。
+运行 `portless doctor` 可检查本地健康状况而不改变状态。它会检查 Node.js、状态目录、代理存活、路由条目、HTTPS CA 信任、主机名解析以及 LAN 模式前置条件，然后打印建议的修复方案。使用 `portless doctor --json` 可以 JSON 打印报告。代理未处于 LAN 模式时，可用 `portless doctor --lan` 运行 LAN 模式检查；`--ip <address>` 效果相同，且必须是合法的 IP 地址。
 
 ## 在 Portless 应用之间做代理
 

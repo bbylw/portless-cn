@@ -27,7 +27,8 @@ export function Mcp() {
           除 <InlineCode>tools_profiles</InlineCode> 外，所有工具都接受共享的 <InlineCode>cwd</InlineCode>、{" "}
           <InlineCode>extraArgs</InlineCode> 和 <InlineCode>timeoutMs</InlineCode> 参数。<InlineCode>cwd</InlineCode>{" "}
           默认为服务器的工作目录，<InlineCode>extraArgs</InlineCode> 会追加在工具的类型化参数之后，<InlineCode>timeoutMs</InlineCode>{" "}
-          默认为 120000。
+          默认为 120000。<InlineCode>list</InlineCode>、<InlineCode>get</InlineCode> 与 <InlineCode>doctor</InlineCode>{" "}
+          工具同样可以传入 <InlineCode>--json</InlineCode> 获取 JSON 输出。
         </DocP>
         <DocP>
           错误的参数（未知或类型不对）以及调用未启用的工具会返回带 <InlineCode>isError: true</InlineCode>{" "}

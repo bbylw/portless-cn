@@ -119,6 +119,8 @@ export function Configuration() {
             <InlineCode>appPort</InlineCode>：CLI <InlineCode>--app-port</InlineCode> 标志 &gt;{" "}
             <InlineCode>PORTLESS_APP_PORT</InlineCode> 环境变量 &gt; <InlineCode>package.json</InlineCode>{" "}
             <InlineCode>"portless"</InlineCode> 键 &gt; <InlineCode>portless.json</InlineCode> 应用条目 &gt; 自动分配。
+            在 monorepo 根目录启动多个被代理应用时，<InlineCode>PORTLESS_APP_PORT</InlineCode> 会被拒绝，请改用各应用自己的{" "}
+            <InlineCode>appPort</InlineCode>。
           </li>
           <li>
             Worktree 标签：CLI <InlineCode>--prefix</InlineCode> 标志（<InlineCode>portless run</InlineCode>）&gt;{" "}
@@ -174,11 +176,25 @@ export function Configuration() {
           当 portless 从 workspace 根目录运行时，只要 <InlineCode>turbo.json</InlineCode> 或 <InlineCode>turbo.jsonc</InlineCode> 可读，它就会使用现有的
           Turbo 集成来保留任务顺序。在根目录的 portless 配置中设置 <InlineCode>"turbo": false</InlineCode> 可改为使用直接派生。
         </DocP>
+        <DocP>
+          在 Turbo 模式下，Turbo 会自行启动每个包脚本，因此 portless 只设置 <InlineCode>PORT</InlineCode> 和{" "}
+          <InlineCode>HOST</InlineCode>，不注入框架参数。请在框架配置中读取它们（例如 Vite 从 <InlineCode>process.env</InlineCode> 设置{" "}
+          <InlineCode>server.port</InlineCode> 与 <InlineCode>server.host</InlineCode>），或设置 <InlineCode>"turbo": false</InlineCode>{" "}
+          让 portless 启动应用并注入参数。
+        </DocP>
       </DocSection>
 
       <DocSection id="script-flag" title="覆盖脚本">
-        <DocP>为单次调用覆盖默认脚本：</DocP>
-        <CodeBlock code={`portless --script start       # 运行 "start" 而不是 "dev"\nportless --script test        # 运行 "test" 而不是 "dev"`} />
+        <DocP>
+          为单次调用覆盖默认脚本（<InlineCode>--script</InlineCode> 仅适用于零参数模式与 <InlineCode>portless run</InlineCode>）：
+        </DocP>
+        <CodeBlock code={`portless --script start       # 运行 "start" 而不是 "dev"\nportless --script test        # 运行 "test" 而不是 "dev"\nportless -- --inspect         # 把参数传给脚本`} />
+        <DocP>
+          在 <InlineCode>--</InlineCode> 之后传入的参数会交给脚本，因此 <InlineCode>portless -- --inspect</InlineCode> 会带{" "}
+          <InlineCode>--inspect</InlineCode> 运行 <InlineCode>dev</InlineCode>。在 monorepo 根目录，portless 会把参数传给每个启动的应用。
+          向带有 shell 运算符或注释的脚本转发参数会以退出码 2 退出；请直接运行命令，或把脚本改为单一命令。Turbo
+          模式下只检查根脚本，Turbo 会把参数原样传给每个包脚本。
+        </DocP>
       </DocSection>
     </div>
   );

@@ -134,6 +134,8 @@ export const docsGroups: { id: DocsGroupId; label: string; pages: DocsPageMeta[]
           { id: "env-vars", title: "环境变量" },
           { id: "reserved-names", title: "保留名称" },
           { id: "bypass", title: "绕过代理" },
+          { id: "help-exit-codes", title: "帮助与退出码" },
+          { id: "state-dir-safety", title: "状态目录安全" },
         ],
         readmeHeadings: ["## 命令"],
       },

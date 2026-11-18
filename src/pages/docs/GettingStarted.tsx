@@ -42,8 +42,10 @@ export function GettingStarted() {
           如果被包装的命令会自我守护（进程退出，但它启动的服务器仍在已分配的端口上监听），portless 会让路由继续指向该服务器并打印其 PID。服务器停止时，路由随之移除。
         </DocP>
         <DocP>
-          自动启动时，portless 会复用最近一次代理运行时的配置（端口、TLS、TLD），因此重启或重启机器后不会静默回退到默认值。显式环境变量（
-          <InlineCode>PORTLESS_PORT</InlineCode>、<InlineCode>PORTLESS_HTTPS</InlineCode> 等）始终优先。
+          自动启动时，portless 仅在代理意外退出后复用已保存的端口、TLS、TLD 与 LAN 设置。正常执行{" "}
+          <InlineCode>portless proxy stop</InlineCode> 会清除它们，因此下次启动使用当次传入的标志与环境变量。显式标志与环境变量（
+          <InlineCode>PORTLESS_PORT</InlineCode>、<InlineCode>PORTLESS_HTTPS</InlineCode> 等）始终优先，因此{" "}
+          <InlineCode>PORTLESS_PORT</InlineCode> 会让代理在该端口启动，而不是已保存的端口。
         </DocP>
         <DocP>
           portless 将按用户状态存储在 <InlineCode>~/.portless</InlineCode>。当代理以 sudo 运行时，它会从调用用户的 home
@@ -87,6 +89,12 @@ export function GettingStarted() {
           这些情况会保留它们自己的端口，因此需要你在脚本中自行设置。portless 无法归类的脚本也会原样保留，例如在它未跟踪参数语法的 CLI 上、子命令之前的某个参数（
           <InlineCode>vp --mode dev build</InlineCode>）。
         </Callout>
+        <DocP>
+          在使用 Turbo 的 workspace 根目录，Turbo 会自行启动每个包脚本，因此 portless 只设置 <InlineCode>PORT</InlineCode> 和{" "}
+          <InlineCode>HOST</InlineCode>，不注入参数。请在框架配置中读取它们（例如 Vite 从 <InlineCode>process.env</InlineCode> 设置{" "}
+          <InlineCode>server.port</InlineCode> 与 <InlineCode>server.host</InlineCode>），或在根目录的 portless 配置中设置{" "}
+          <InlineCode>"turbo": false</InlineCode>，让 portless 启动应用并注入参数。
+        </DocP>
       </DocSection>
 
       <DocSection id="how-it-works" title="工作原理">
@@ -107,6 +115,10 @@ export function GettingStarted() {
         <DocP>
           在 LAN 模式之外，代理及其 HTTP 重定向监听器仅绑定到 IPv4 和 IPv6 回环地址 <InlineCode>127.0.0.1</InlineCode> 和{" "}
           <InlineCode>::1</InlineCode>。它们不接受通过 LAN、VPN 或其他网络接口的连入。
+        </DocP>
+        <DocP>
+          portless 把自身的状态行写到 stderr，因此 stdout 只包含你应用的输出。非空的 <InlineCode>NO_COLOR</InlineCode> 会禁用颜色；
+          <InlineCode>FORCE_COLOR=0</InlineCode> 禁用颜色，<InlineCode>FORCE_COLOR=1</InlineCode> 强制启用。
         </DocP>
       </DocSection>
 
